@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<extension engine="1.0">
+	<id>ajax_post_edit</id>
+	<title>Ajax Post Edit</title>
+	<version>1.8.1</version>
+	<description>This extension allows quickly edit post</description>
+	<author>Daris. Adapted by hcs</author>
+	<minversion>1.4RC1</minversion>
+	<maxtestedon>1.4RC2</maxtestedon>
+
+	<dependencies>
+		<dependency>pun_jquery</dependency>
+	</dependencies>
+
+	<hooks>
+		<hook id="ft_end"><![CDATA[
+if (FORUM_PAGE == 'viewtopic') {
+	preg_match_all("#\<div\sid\=\"p(\d*)\"#s", $tpl_main, $output);
+	foreach($output[1] as $s) {
+		$str = substr($tpl_main, strpos($tpl_main, '<div id="p'.$s.'"'));
+		$str = substr($str, 0, strpos($str, '</p>'));
+		$old = $str;
+		$str = str_replace('<div class="entry-content">', '<div id="post'.$s.'" class="entry-content">', $str);
+		$tpl_main = str_replace($old, $str, $tpl_main);
+	}
+}
+]]></hook>
+		<hook id="hd_head"><![CDATA[
+
+if (FORUM_PAGE == 'viewtopic')
+{
+	if (file_exists($ext_info['path'].'/lang/'.$forum_user['language'].'.php'))
+		require $ext_info['path'].'/lang/'.$forum_user['language'].'.php';
+	else
+		require $ext_info['path'].'/lang/English.php';
+
+	$ape_js_env = '
+    	PUNBB.env.ape_vars = {
+			"csrf_token" : "'.generate_form_token($ext_info['url'].'/edit.php').'", 
+			"Loading" : "'.$lang_ape['Loading'].'",
+			"Quick edit" : "'.$lang_ape['Quick Edit'].'", 
+			"Normal edit" : "'.$lang_ape['Normal Edit'].'", 
+			"url_edit" : "'.$forum_url['edit'].'", 
+    };';
+
+
+	$forum_loader->add_js($ape_js_env, array('type' => 'inline'));
+	$forum_loader->add_js($ext_info['url'].'/ajax_post_edit.js', array('type' => 'url', 'group' => FORUM_JS_GROUP_COUNTER));
+
+	$forum_loader->add_css($ext_info['url'].'/style.css', array('type' => 'url'));
+	
+	if (file_exists($ext_info['path'].'/style/'.$forum_user['style'].'/style.css'))
+		$forum_loader->add_css($ext_info['url'].'/style/'.$forum_user['style'].'/style.css', array('type' => 'url', 'media' => 'screen'));
+	else
+		$forum_loader->add_css($ext_info['url'].'/style/Oxygen/style.css', array('type' => 'url', 'media' => 'screen'));
+}
+					     ]]></hook>
+
+		<hook id="vt_row_pre_post_actions_merge"><![CDATA[
+if (!$forum_user['is_guest'] && ($forum_user['is_admmod'] || ($cur_post['poster_id'] == $forum_user['id'] && $forum_user['g_edit_posts'] == '1' && $cur_topic['closed'] == '0')))
+{
+	$content = '<span class="edit-post'.(!empty($forum_page['post_actions']) ? ' item1' : '').'" id="menu'.$cur_post['id'].'"><a href="javascript:PUNBB.env.ape.show_menu('. $cur_post['id'].')">'.$lang_topic['Edit'].'<span> '.$lang_topic['Post'].' '.forum_number_format($forum_page['start_from'] + $forum_page['item_count']).'</span></a></span>';
+
+	if (!isset($forum_page['post_actions']['edit']))
+		$forum_page['post_actions']['edit'] = '<span class="edit-post'.(empty($forum_page['post_actions']) ? ' first-item' : '').'"><a href="'.forum_link($forum_url['edit'], $cur_post['id']).'">'.$lang_topic['Edit'].'<span> '.$lang_topic['Post'].' '.forum_number_format($forum_page['start_from'] + $forum_page['item_count']).'</span></a></span>';
+
+	$noscript = '<noscript>' . $forum_page['post_actions']['edit'] . '</noscript>';
+
+	$forum_page['post_actions']['edit'] = '<script type="text/javascript">document.write(\'' . $content . '\')</script>'. $noscript;
+
+}
+					      ]]></hook>
+
+		<hook id="fn_message_start"><![CDATA[
+
+if (strpos($_SERVER['SCRIPT_FILENAME'], 'extensions/ajax_post_edit/edit.php') !== false)
+	exit($message);
+
+		]]></hook>
+		
+		<hook id="fn_csrf_confirm_form_start"><![CDATA[
+		
+if (strpos($_SERVER['SCRIPT_FILENAME'], 'extensions/ajax_post_edit/edit.php') !== false)
+	exit('csrf_confirm:'.$lang_common['CSRF token mismatch'].':'.generate_form_token($ext_info['url'].'/edit.php'));
+		]]></hook>
+
+
+	</hooks>
+</extension>
