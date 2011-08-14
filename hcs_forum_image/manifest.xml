@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE extension SYSTEM "ext-1.0.dtd">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE extension SYSTEM "ext-1.0.dtd">
+
+<!--
+/**
+ * Allow add images to forum on index page. Also may be as banner
+ *
+ *	hcs_forum_image 
+ * @copyright (C) 2011 hcs hcs@mail.ru
+ * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+ *
+ *	Extension for PunBB (C) 2008-2009 PunBB
+ * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+ */
+-->
+
+<extension engine="1.0">
+	<id>hcs_forum_image</id>
+	<title>forum image on index page</title>
+	<version>1.0.4</version>
+	<description>Allow add images to forum on index page. Also may be as banner</description>
+	<author>hcs</author>
+	<minversion>1.3</minversion>
+	<maxtestedon>1.4RC2</maxtestedon>
+
+	<install><![CDATA[
+if (!$forum_db->field_exists('forums', 'f_image'))
+	$forum_db->add_field('forums', 'f_image', 'varchar(255)', false, '');
+
+if (!$forum_db->field_exists('forums', 'f_image_link'))
+	$forum_db->add_field('forums', 'f_image_link', 'varchar(255)', false, '');
+
+if (!$forum_db->field_exists('forums', 'f_image_place'))
+	$forum_db->add_field('forums', 'f_image_place', 'TINYINT(1)', false, '1');
+
+if (!$forum_db->field_exists('forums', 'f_image_info'))
+	$forum_db->add_field('forums', 'f_image_info', 'varchar(355)', false, '');
+	]]></install>
+
+	<uninstall><![CDATA[
+$query = array(
+	'SELECT'	=> 'f_image',
+	'FROM'		=> 'forums',
+);
+$result = $forum_db->query_build($query) or error(__FILE__, __LINE__);
+while ($cur_forum = $forum_db->fetch_assoc($result)) {
+	if ($cur_forum['f_image']!=''){
+		@unlink($ext_info['path'].'/uploads/'.$cur_forum['f_image']);
+	}
+}
+$forum_db->drop_field('forums', 'f_image');
+$forum_db->drop_field('forums', 'f_image_link');
+$forum_db->drop_field('forums', 'f_image_place');
+$forum_db->drop_field('forums', 'f_image_info');
+	]]></uninstall>
+
+	<hooks>
+		<hook id="afo_edit_forum_pre_header_load"><![CDATA[
+if (file_exists($ext_info['path'].'/lang/'.$forum_user['language'].'.php'))
+	require $ext_info['path'].'/lang/'.$forum_user['language'].'.php';
+else
+	require $ext_info['path'].'/lang/English.php';
+
+if (isset($_GET['f']) && file_exists($ext_info['path'].'/uploads/'.$_GET['f'])){
+	if (!isset($_POST['csrf_token']) && (!isset($_GET['csrf_token']) || $_GET['csrf_token'] !== generate_form_token('del_banner'.$forum_user['id'])))
+		csrf_confirm_form();
+	unlink($ext_info['path'].'/uploads/'.$_GET['f']);
+	$query = array(
+		'UPDATE'	=> 'forums',
+		'SET'		=> 'f_image=\'\', f_image_info=\'\'',
+		'WHERE'		=> 'id='.$forum_id
+	);
+	$forum_db->query_build($query) or error(__FILE__, __LINE__);
+	$cur_forum['f_image'] = '';
+}
+		]]></hook>
+		<hook id="afo_edit_forum_pre_permissions_part"><![CDATA[
+
+
+$form_head_action = forum_link($forum_url['admin_forums']).'?edit_forum='.$forum_id; 
+$find_form_head = '<form method="post" class="frm-form" accept-charset="utf-8" action="'.$form_head_action.'">';
+$replace_form_head = '<form method="post" class="frm-form" accept-charset="utf-8" action="'.$form_head_action.'" enctype="multipart/form-data">'; 
+$tpl_temp = forum_trim(ob_get_contents());
+$tpl_temp = str_replace($find_form_head, $replace_form_head , $tpl_temp);
+$tpl_main = str_replace('<!-- forum_main -->', $tpl_temp.'<!-- forum_main -->', $tpl_main);
+ob_end_clean();
+ob_start();
+			?>
+				<div class="content-head">
+					<h3 class="hn"><span><?php echo $lang_forum_f_image['forum head'] ?></span></h3>
+				</div>
+				<div class="ct-box">
+					<ul>
+						<?php echo "\n\t\t\t\t\t".$lang_forum_f_image['forum info']."\n" ?>
+					</ul>
+				</div>
+				<fieldset class="frm-group group<?php echo ++$forum_page['group_count'] ?>">
+					<legend class="group-legend"><strong><?php echo $lang_forum_f_image['Forum image'] ?></strong></legend>
+					<div class="ct-set set<?php echo ++$forum_page['item_count'] ?>">
+						<div class="ct-box">
+							<h3 class="ct-legend hn"><span><?php echo $lang_forum_f_image['current image'] ?></span></h3>
+<?php if ($cur_forum['f_image']!=''): ?>
+							<p class="options"><span><img src="<?php echo $ext_info['url'].'/uploads/'.$cur_forum['f_image'] ?>" alt="" /></span></p>
+<?php endif; ?>
+							<p><?php echo ($cur_forum['f_image']!='') ? '<a href="'.$form_head_action.'&f='.$cur_forum['f_image'].'&csrf_token='.generate_form_token('del_banner'.$forum_user['id']).'"><strong>'.$lang_forum_f_image['Delete image info'].'</strong></a>' : $lang_forum_f_image['No image info'] ?></p>
+						</div>
+					</div>
+					<div class="sf-set set<?php echo ++$forum_page['item_count'] ?>">
+						<div class="sf-box select">
+							<label for="fld<?php echo ++$forum_page['fld_count'] ?>"><span><?php echo $lang_forum_f_image['Image place'] ?></span></label><br />
+							<span class="fld-input"><select id="fld<?php echo $forum_page['fld_count'] ?>" name="f_image_place">
+								<option value="0"<?php if ($cur_forum['f_image_place'] == '0') echo ' selected="selected"' ?>><?php echo $lang_forum_f_image['Place left'] ?></option>
+								<option value="1"<?php if ($cur_forum['f_image_place'] == '1') echo ' selected="selected"' ?>><?php echo $lang_forum_f_image['Place right'] ?></option>
+							</select></span>
+						</div>
+					</div>
+					<div class="sf-set set<?php echo ++$forum_page['item_count'] ?>">
+						<div class="sf-box text">
+							<label for="fld<?php echo ++$forum_page['fld_count'] ?>"><span><?php echo $lang_forum_f_image['Image link'] ?></span><small><?php echo $lang_forum_f_image['Image link help'] ?></small></label><br />
+							<span class="fld-input"><input type="text" id="fld<?php echo $forum_page['fld_count'] ?>" name="f_image_link" size="35" maxlength="255" value="<?php echo forum_htmlencode($cur_forum['f_image_link']) ?>" /></span>
+						</div>
+					</div>
+					<div class="sf-set set<?php echo ++$forum_page['item_count'] ?>">
+						<div class="sf-box text required">
+							<label for="fld<?php echo ++$forum_page['fld_count'] ?>"><span><?php echo $lang_forum_f_image['Upload image file'] ?></span><small><?php echo $lang_forum_f_image['Image upload help'] ?></small></label><br />
+							<span class="fld-input"><input id="fld<?php echo $forum_page['fld_count'] ?>" name="req_file_f_image" type="file" size="40" /></span>
+						</div>
+					</div>
+				</fieldset>
+			<?php
+		]]></hook>
+
+		<hook id="afo_edit_forum_qr_get_forum_details"><![CDATA[
+$query['SELECT'] .= ', f.f_image, f.f_image_link, f.f_image_place';
+		]]></hook>
+		<hook id="afo_save_forum_form_submitted"><![CDATA[
+require_once FORUM_ROOT.'lang/'.$forum_user['language'].'/profile.php';
+if ( isset($_FILES['req_file_f_image']) && $_FILES['req_file_f_image']['size'] != 0 )
+{
+	$uploaded_file = $_FILES['req_file_f_image'];
+
+			// Make sure the upload went smooth
+			if (isset($uploaded_file['error']) && empty($errors))
+			{
+				switch ($uploaded_file['error'])
+				{
+					case 1:	// UPLOAD_ERR_INI_SIZE
+					case 2:	// UPLOAD_ERR_FORM_SIZE
+						$errors[] = $lang_profile['Too large ini'];
+						break;
+
+					case 3:	// UPLOAD_ERR_PARTIAL
+						$errors[] = $lang_profile['Partial upload'];
+						break;
+
+					case 4:	// UPLOAD_ERR_NO_FILE
+						$errors[] = $lang_profile['No file'];
+						break;
+
+					case 6:	// UPLOAD_ERR_NO_TMP_DIR
+						$errors[] = $lang_profile['No tmp directory'];
+						break;
+
+					default:
+						// No error occured, but was something actually uploaded?
+						if ($uploaded_file['size'] == 0)
+							$errors[] = $lang_profile['No file'];
+						break;
+				}
+			}
+
+			if (is_uploaded_file($uploaded_file['tmp_name']) && empty($errors))
+			{
+				$allowed_types = array('image/gif', 'image/jpeg', 'image/pjpeg', 'image/png', 'image/x-png');
+
+				if (!in_array($uploaded_file['type'], $allowed_types))
+					$errors[] = $lang_profile['Bad type'];
+
+				if (empty($errors))
+				{
+					// Determine type
+					$extension = null;
+					if ($uploaded_file['type'] == 'image/gif')
+						$extension = '.gif';
+					else if ($uploaded_file['type'] == 'image/jpeg' || $uploaded_file['type'] == 'image/pjpeg')
+						$extension = '.jpg';
+					else
+						$extension = '.png';
+
+
+					// Move the file to the avatar directory. We do this before checking the width/height to circumvent open_basedir restrictions.
+					if (!@move_uploaded_file($uploaded_file['tmp_name'], $ext_info['path'].'/uploads/banner.tmp'))
+						$errors[] = sprintf($lang_profile['Move failed'], '<a href="mailto:'.forum_htmlencode($forum_config['o_admin_email']).'">'.forum_htmlencode($forum_config['o_admin_email']).'</a>');
+
+					if (empty($errors))
+					{
+						while(true){
+							$new_f_image = md5(time().'Salt').$extension;
+							if(!is_file($ext_info['path'].'/uploads/'.$new_f_image))
+								break;
+						}
+
+						// Put the new avatar in its place
+						@rename($ext_info['path'].'/uploads/banner.tmp', $ext_info['path'].'/uploads/'.$new_f_image);
+						@chmod($ext_info['path'].'/uploads/'.$new_f_image, 0644);
+					}
+				}
+			}
+			else if (empty($errors))
+				$errors[] = $lang_profile['Unknown failure'];
+
+			if (!empty($errors)) {
+				message('<ul><li>'.implode('</li><li>', $errors).'</li</ul>');
+			}	
+		@unlink($ext_info['path'].'/uploads/'.$cur_forum['f_image']);		
+}		
+
+		]]></hook>
+
+		<hook id="afo_save_forum_qr_update_forum"><![CDATA[
+if (isset($new_f_image)) {
+	$D = getimagesize($ext_info['path'].'/uploads/'.$new_f_image);
+	$query['SET'] .= ', f_image=\''.$forum_db->escape($new_f_image).'\'';
+	$query['SET'] .= ', f_image_info =\''.$forum_db->escape(serialize($D)).'\'';
+	unset($D);
+}
+$query['SET'] .= ', f_image_link=\''.$forum_db->escape($_POST['f_image_link']).'\', f_image_place=\''.intval($_POST['f_image_place']).'\'';
+		]]></hook>
+
+		<hook id="in_row_pre_display"><![CDATA[
+if ($cur_forum['f_image']!='') {
+	$f_image = '<img src="'. $ext_info['url'].'/uploads/'.$cur_forum['f_image'].'" alt="" />'; 
+	if ($cur_forum['f_image_link']!='') {
+		$f_image = '<a href="http://'.$cur_forum['f_image_link'].'">'.$f_image.'</a>';
+		if ($cur_forum['f_image_info']!='')
+		{
+			$D = unserialize($cur_forum['f_image_info']);
+		}
+		else
+		{
+			$D = getimagesize($ext_info['path'].'/uploads/'.$cur_forum['f_image']);
+			$query = array(
+				'UPDATE'	=> 'forums',
+				'SET'		=> 'f_image_info =\''.$forum_db->escape(serialize($D)).'\'',
+				'WHERE'		=> 'id='.$cur_forum['fid']
+			);
+			$forum_db->query_build($query) or error(__FILE__, __LINE__);
+		}
+		$forum_page['item_body']['subject']['title'] = str_replace('<h3 class="hn">', '<h3 class="hn" style="margin-right:'.$D[0].'px">', $forum_page['item_body']['subject']['title']);
+	}
+	
+	array_unshift($forum_page['item_body']['subject'], '<div style="float:'.(($cur_forum['f_image_place'] == 0) ? 'left' : 'right').';">'.$f_image.'</div>' );
+}
+		]]></hook>
+
+		<hook id="in_qr_get_cats_and_forums"><![CDATA[
+$query['SELECT'] .= ', f.f_image, f.f_image_place, f.f_image_link, f.f_image_info';
+		]]></hook>
+	</hooks>
+</extension>
