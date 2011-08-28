@@ -43,9 +43,8 @@ class App {
         self::$autoloading['HTML'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'html.php';
         self::$autoloading['View'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'view.php';
         self::$autoloading['Controller'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'controller.php';
-        self::$autoloading['Logger'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'logger.php';
+        self::$autoloading['Upload'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'upload.php';
         self::$autoloading['Base'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'base.php';
-        self::$autoloading['Event'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'Event.php';
         self::$autoloading['Registry'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'registry.php';
     }	
     

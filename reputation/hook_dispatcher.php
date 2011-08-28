@@ -20,16 +20,81 @@ class Reputation_Hook_Dispatcher extends Base
 		App::load_language('reputation.reputation');
 		App::inject_hook('vt_qr_get_posts',array(
 			'name'	=>	'reputation',
-			'code'	=>	'Reputation_Hook_Dispatcher::vt_qr_get_posts($query, $forum_user[\'id\'], App::$now);'
+			'code'	=>	'Reputation_Hook_Dispatcher::vt_qr_get_posts($query, $forum_user[\'id\'], App::$now, $posts_id);'
 		));
 		App::inject_hook('vt_row_pre_post_actions_merge',array(
 			'name'	=>	'reputation',
 			'code'	=>	'Reputation_Hook_Dispatcher::vt_row_pre_post_actions_merge($cur_post,$forum_user);'
 		));
+		App::inject_hook('vt_row_pre_display',array(
+			'name'	=>	'reputation',
+			'code'	=>	'Reputation_Hook_Dispatcher::vt_row_pre_display($forum_page, $cur_post);'
+		));		
 	}
 	
-	public function vt_qr_get_posts(& $query, $user_id, $time)
+	public function vt_row_pre_display(& $forum_page, $cur_post)
 	{
+		$bufer = array ('minus' => array(), 'plus' => array());
+		if (isset($forum_page['reputation_info'][$cur_post['id']]))
+		{
+			foreach ($forum_page['reputation_info'][$cur_post['id']] as $cur_rep_info )
+			{
+				if ($cur_rep_info['rep_minus'])
+				{
+					$bufer['minus'][]= '<a href="'.forum_link(App::$forum_url['user'], $cur_rep_info['from_user_id']).'">'.forum_htmlencode($cur_rep_info['username']).'</a>'; 
+				}
+				if ($cur_rep_info['rep_plus'])
+				{
+					$bufer['plus'][]= '<a href="'.forum_link(App::$forum_url['user'], $cur_rep_info['from_user_id']).'">'.forum_htmlencode($cur_rep_info['username']).'</a>';
+				}
+			}
+
+			if (!empty($bufer['plus']))
+			{
+				$forum_page['message']['reputation'] .= '<span class="rep_plus">Положительно оценили:<br/>'.implode(', ', $bufer['plus']).'</span>';
+			}
+			
+			if (!empty($bufer['minus']))
+			{
+				$forum_page['message']['reputation'] .= '<span class="rep_plus">Отрицательно оценили:<br/>'.implode(', ', $bufer['minus']).'</span>';
+			}
+					
+			if (!empty($forum_page['message']['reputation']))
+			{
+				if (!isset($forum_page['message']['signature']))
+				{
+					$forum_page['message']['reputation'] = '<div class="sig-content"><span class="sig-line"><!-- --></span>'.$forum_page['message']['reputation'].'</div>';
+				}
+				else
+				{
+					$forum_page['message']['reputation'] = '<div class="sig-content">'.$forum_page['message']['reputation'].'</div>';
+				}
+			}	
+		}
+	}
+	
+	public function vt_qr_get_posts(& $query, $user_id, $time, $posts_id)
+	{
+		$GLOBALS['forum_page']['reputation_info'] = array();
+		$query_rep = array(
+			'SELECT'	=> 'r.post_id, u.username, r.from_user_id, r.rep_plus, r.rep_minus',
+			'FROM'		=> 'reputation AS r',
+			'JOINS'		=> array(
+				array(
+					'INNER JOIN'	=> 'users AS u',
+					'ON'			=> 'u.id = r.from_user_id'
+				),
+			),
+			'WHERE'		=> 'r.post_id IN ('.implode(',', $posts_id).')'
+		);
+		
+		$rep_result = App::$forum_db->query_build($query_rep) or error(__FILE__, __LINE__);
+		
+		while($cur_rep = App::$forum_db->fetch_assoc($rep_result))
+		{
+			$GLOBALS['forum_page']['reputation_info'][$cur_rep['post_id']][] = $cur_rep;
+		}
+		
 		$query['SELECT'] .= ', u.rep_plus, u.rep_minus, u.rep_enable, u.rep_disable_adm, r.id as rep_id';
 		$query['JOINS'][] = array(
 			'LEFT JOIN'	=> 'reputation AS r',

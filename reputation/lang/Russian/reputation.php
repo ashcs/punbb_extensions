@@ -74,4 +74,5 @@ return array(
 	'Too long comment'	=>	'Ответ превышает допустимый размер %s символов',
 	'Comment add redirect'	=>	'Ответ добавлен. Перенаправление...',
 'Message on topic'		=> 'Reply in topic %s',
+'Display settings'		=>	'Display settings',
 );

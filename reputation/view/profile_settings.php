@@ -7,14 +7,14 @@
 <?php if ($user['id'] == App::$forum_user['id']): 
 			if (App::$forum_user['is_admmod'] || $user['rep_disable_adm'] == 0) : ?>						
 							<span class="fld-input"><input type="checkbox" id="fld<?php echo ++App::$forum_page['fld_count'] ?>" name="form[rep_enable]" value="1"<?php if ($user['rep_enable'] == '1') echo ' checked="checked"' ?> /></span>
-							<label for="fld<?php echo $forum_page['fld_count'] ?>"><?php echo App::$lang['Manage reputation help'] ?></label>
+							<label for="fld<?php echo App::$forum_page['fld_count'] ?>"><?php echo App::$lang['Manage reputation help'] ?></label>
 <?php		else : ?>
 							<span class="fld-input"><input type="checkbox" id="fld<?php echo ++App::$forum_page['fld_count'] ?>" name="disabled" value="1" disabled="disabled" /></span>
-							<label for="fld<?php echo $forum_page['fld_count'] ?>"><?php echo App::$lang['Individual Disabled'] ?></label>
+							<label for="fld<?php echo App::$forum_page['fld_count'] ?>"><?php echo App::$lang['Individual Disabled'] ?></label>
 <?php 		endif; ?>
 <?php else : ?>
 							<span class="fld-input"><input type="checkbox" id="fld<?php echo ++App::$forum_page['fld_count'] ?>" name="form[rep_disable_adm]" value="1"<?php if ($user['rep_disable_adm'] == '1') echo ' checked="checked"' ?> /></span>
-							<label for="fld<?php echo $forum_page['fld_count'] ?>"><?php echo App::$lang['Individual adm'] ?></label>
+							<label for="fld<?php echo App::$forum_page['fld_count'] ?>"><?php echo App::$lang['Individual adm'] ?></label>
 <?php endif; ?>							
 						</div>
 					</div>

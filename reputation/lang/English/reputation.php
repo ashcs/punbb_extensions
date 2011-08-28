@@ -73,5 +73,6 @@ return array(
 'Too long comment' => 'The answer is over the allowable size of %s characters',
 'Comment add redirect' => 'The answer is added. Redirecting ...',
 'Message on topic'		=> 'Reply in topic %s',
+'Display settings'		=>	'Display settings',
 	
 );

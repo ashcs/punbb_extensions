@@ -62,7 +62,7 @@ class Reputation_Controller_Reputation extends Controller
 			View::$instance->content = View::factory('view_empty', array ('lang' => App::$lang));	
 		}
 	
-		App::$forum_page['crumbs'][] = array(sprintf(App::$lang['User reputation'], forum_htmlencode(App::$forum_user['username'])), forum_link(App::$forum_url['reputation_view'], App::$forum_user['id']));
+		App::$forum_page['crumbs'][] = array(sprintf(App::$lang['User reputation'], forum_htmlencode($user_rep['username'])), forum_link(App::$forum_url['reputation_view'], $this->uid));
 	}
 	
 	public function delete()
@@ -106,7 +106,7 @@ class Reputation_Controller_Reputation extends Controller
 			}
 		}		
 		App::$forum_page['form_action'] = forum_link(App::$forum_url['reputation_'.$action], array($this->pid, $this->uid));
-		View::$instance = View::factory('form', array('heading' => sprintf(App::$lang[$action],forum_htmlencode($target['username']))));
+		View::$instance = View::factory('form', array('heading' => sprintf(App::$lang[ucfirst($action)],forum_htmlencode($target['username']))));
 		View::$instance->errors = View::factory('errors', array('errors'=>$errors, 'head' => App::$lang['Errors']));
 	}
 	
