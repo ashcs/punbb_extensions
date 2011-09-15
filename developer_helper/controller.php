@@ -6,7 +6,7 @@ class Controller extends Base
 	public $layout;
 	public $path;
 	protected $real_path;
-	protected $view;
+	public $view;
 	
 	
 	public $page = 'default-page';
