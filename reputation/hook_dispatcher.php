@@ -51,7 +51,7 @@ class Reputation_Hook_Dispatcher extends Base
 
 			if (!empty($bufer['plus']))
 			{
-				$forum_page['message']['reputation'] .= '<span class="rep_plus">Положительно оценили:<br/>'.implode(', ', $bufer['plus']).'</span>';
+				$forum_page['message']['reputation'] = '<span class="rep_plus">Положительно оценили:<br/>'.implode(', ', $bufer['plus']).'</span>';
 			}
 			
 			if (!empty($bufer['minus']))
