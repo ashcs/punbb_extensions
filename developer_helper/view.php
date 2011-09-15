@@ -249,7 +249,7 @@ class Kohana_View {
 	 */
 	public function set_filename($file)
 	{
-		$this->_file = str_replace('.', DIRECTORY_SEPARATOR, $file).'.php';
+		$this->_file = $file.'.php';
 		return $this;
 	}
 	
