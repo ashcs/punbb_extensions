@@ -249,23 +249,10 @@ class Kohana_View {
 	 */
 	public function set_filename($file)
 	{
-/*
-		if (($path = Kohana::find_file('views', $file)) === FALSE)
-		{
-			throw new Kohana_View_Exception('The requested view :file could not be found', array(
-				':file' => $file,
-			));
-		}
-
-*/
-		$view = str_replace('.', DIRECTORY_SEPARATOR, $file);
-		// Store the file path locally
-		$this->_file = View::$path . 'view' . DIRECTORY_SEPARATOR .$view.'.php';
-		//$this->_file = $view.'.php';
-
+		$this->_file = str_replace('.', DIRECTORY_SEPARATOR, $file).'.php';
 		return $this;
 	}
-
+	
 	/**
 	 * Assigns a variable by name. Assigned values will be available as a
 	 * variable within the view file:
@@ -342,7 +329,6 @@ class Kohana_View {
 
 		if (empty($this->_file))
 		{
-			//throw new Kohana_View_Exception('You must set the file to use within your view before rendering');
 			message ('You must set the file to use within your view before rendering');
 		}
 
@@ -355,5 +341,4 @@ class Kohana_View {
 class View extends Kohana_View 
 {
 	public static $instance;
-	public static $path;
 }

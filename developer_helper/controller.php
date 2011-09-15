@@ -6,7 +6,9 @@ class Controller extends Base
 	public $layout;
 	public $path;
 	protected $real_path;
-
+	protected $view;
+	
+	
 	public $page = 'default-page';
 	
 	public $section = 'default-section';
@@ -25,7 +27,8 @@ class Controller extends Base
 	public function __construct($ext_path)
 	{
 		parent::__construct();
-		View::$path = $this->path = $ext_path;
+		$this->path = $ext_path;
+		$this->view = $ext_path . 'view' . DIRECTORY_SEPARATOR;
 		// Reset forum_page counters
 		App::$forum_page['group_count'] = App::$forum_page['item_count'] = App::$forum_page['fld_count'] = 0;
 

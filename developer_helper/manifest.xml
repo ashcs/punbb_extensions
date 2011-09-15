@@ -19,7 +19,7 @@
 <extension engine="1.0">
 	<id>developer_helper</id>
 	<title>Developer helper</title>
-	<version>1.0.0.8</version>
+	<version>1.0.0.9</version>
 	<description>Adds an more API function for developers to punBB</description>
 	<author>hcs</author>
 	<minversion>1.3</minversion>
