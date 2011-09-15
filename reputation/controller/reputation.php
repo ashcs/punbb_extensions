@@ -43,7 +43,7 @@ class Reputation_Controller_Reputation extends Controller
 			message(App::$lang_common['Bad request']); 
 
 		App::$forum_page['form_action'] = forum_link(App::$forum_url['reputation_delete'], $this->uid);
-		View::$instance = View::factory('view', array ('heading' => sprintf(App::$lang['User reputation'], forum_htmlencode($user_rep['username'])) . '&nbsp;&nbsp;<strong>[+'. $user_rep['count_rep_plus'] . ' / -' . $user_rep['count_rep_minus'] .'] &nbsp;</strong>'));
+		View::$instance = View::factory($this-view.'view', array ('heading' => sprintf(App::$lang['User reputation'], forum_htmlencode($user_rep['username'])) . '&nbsp;&nbsp;<strong>[+'. $user_rep['count_rep_plus'] . ' / -' . $user_rep['count_rep_minus'] .'] &nbsp;</strong>'));
 		$count = $this->reputation->count_by_user_id($this->uid);
 		
 		if ($count > 0)
@@ -55,11 +55,11 @@ class Reputation_Controller_Reputation extends Controller
 			}			
 			App::paginate($count, App::$forum_user['disp_topics'], App::$forum_url['reputation_view'],array($this->uid));
 			$template = (App::$forum_user['g_id'] == FORUM_ADMIN) ? 'view_admin' : 'view_user';
-			View::$instance->content = View::factory($template, array ('records' => $this->reputation->get_info($this->uid, App::$forum_user['g_id'], App::$forum_page['start_from'], App::$forum_page['finish_at']))); 
+			View::$instance->content = View::factory($this-view.$template, array ('records' => $this->reputation->get_info($this->uid, App::$forum_user['g_id'], App::$forum_page['start_from'], App::$forum_page['finish_at']))); 
 		}
 		else {
 			
-			View::$instance->content = View::factory('view_empty', array ('lang' => App::$lang));	
+			View::$instance->content = View::factory($this-view.'view_empty', array ('lang' => App::$lang));	
 		}
 	
 		App::$forum_page['crumbs'][] = array(sprintf(App::$lang['User reputation'], forum_htmlencode($user_rep['username'])), forum_link(App::$forum_url['reputation_view'], $this->uid));
@@ -106,8 +106,8 @@ class Reputation_Controller_Reputation extends Controller
 			}
 		}		
 		App::$forum_page['form_action'] = forum_link(App::$forum_url['reputation_'.$action], array($this->pid, $this->uid));
-		View::$instance = View::factory('form', array('heading' => sprintf(App::$lang[ucfirst($action)],forum_htmlencode($target['username']))));
-		View::$instance->errors = View::factory('errors', array('errors'=>$errors, 'head' => App::$lang['Errors']));
+		View::$instance = View::factory($this-view.'form', array('heading' => sprintf(App::$lang[ucfirst($action)],forum_htmlencode($target['username']))));
+		View::$instance->errors = View::factory($this-view.'errors', array('errors'=>$errors, 'head' => App::$lang['Errors']));
 	}
 	
 	public function comment()
@@ -146,8 +146,8 @@ class Reputation_Controller_Reputation extends Controller
 		App::$forum_page['crumbs'][] = App::$lang['Comment header'];
 		App::$forum_page['form_action'] = forum_link(App::$forum_url['reputation_comment'], $this->rid);
 
-		View::$instance = View::factory('form', array('heading' => App::$lang['Comment for']));
-		View::$instance->errors = View::factory('errors', array('errors'=>$errors, 'head' => App::$lang['Errors']));
+		View::$instance = View::factory($this-view.'form', array('heading' => App::$lang['Comment for']));
+		View::$instance->errors = View::factory($this-view.'errors', array('errors'=>$errors, 'head' => App::$lang['Errors']));
 	}
 	
 	private function add_voice(& $errors, $target, $method)

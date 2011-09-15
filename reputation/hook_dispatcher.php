@@ -181,8 +181,6 @@ class Reputation_Hook_Dispatcher extends Base
 			'name'	=>	'reputation',
 			'code'	=>	'Reputation_Hook_Dispatcher::aop_features_validation($form);'
 		));		
-
-		View::$path = FORUM_ROOT.'extensions/reputation/';
 	}		
 	
 	/**
@@ -193,7 +191,7 @@ class Reputation_Hook_Dispatcher extends Base
 	 */
 	public function agr_add_edit_group_flood_fieldset_end($group)
 	{
-		View::$instance = View::factory('admin_group_setting', array('group' => $group));	
+		View::$instance = View::factory(FORUM_ROOT.'extensions/reputation/view/admin_group_setting', array('group' => $group));	
 		echo  View::$instance->render();
 	}
 	
@@ -204,7 +202,7 @@ class Reputation_Hook_Dispatcher extends Base
 	public function aop_features_message_fieldset_end()
 	{
 		$forum_page['group_count'] = $forum_page['item_count'] = 0;
-		View::$instance = View::factory('admin_options_features', array('forum_page' => $forum_page));	
+		View::$instance = View::factory(FORUM_ROOT.'extensions/reputation/view/admin_options_features', array('forum_page' => $forum_page));	
 		echo  View::$instance->render();
 	}	
 
@@ -252,14 +250,12 @@ class Reputation_Hook_Dispatcher extends Base
 			'name'	=>	'reputation',
 			'code'	=>	'Reputation_Hook_Dispatcher::pf_delete_user_form_submitted($id);'
 		));				
-		
-		View::$path = FORUM_ROOT.'extensions/reputation/';
 	}		
 
 	public function pf_change_details_settings_local_fieldset_end($user, $lang_profile)
 	{
 		$forum_page['group_count'] = $forum_page['item_count'] = 0;
-		View::$instance = View::factory('profile_settings', array('user' => $user, 'lang_profile' => $lang_profile));	
+		View::$instance = View::factory(FORUM_ROOT.'extensions/reputation/view/profile_settings', array('user' => $user, 'lang_profile' => $lang_profile));	
 		echo  View::$instance->render();
 	}	
 	
