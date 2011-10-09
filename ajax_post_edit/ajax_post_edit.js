@@ -1,6 +1,6 @@
 PUNBB.env.ape = {
 
-	textAreaHeight : 200, // height of edit box
+	textAreaHeight : 600, // height of edit box
 	temp_post : '', // post message with html
 	id : -1, // currently edited post id
 	menu_hovered : false, // if menu is hovered
@@ -56,6 +56,7 @@ PUNBB.env.ape = {
 		var parsed_message = this.match(data, 'parsed_message');
 		// If there aren't any errors
 		if (parsed_message != '') {
+			
 			var entry_content_html = data.substring(0, data
 					.indexOf('<!-- END FORM -->'));
 
@@ -65,7 +66,7 @@ PUNBB.env.ape = {
 				$('#postedit').height(this.textAreaHeight + 'px');
 
 				$('#post' + PUNBB.env.ape.id).fadeIn('fast', function() {
-					$('#postedit').focus();
+					$('#postedit').attr({'rows':8}).css({'width':'99%'}).focus();
 				});
 			});
 
