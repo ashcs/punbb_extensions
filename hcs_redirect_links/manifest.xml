@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE extension SYSTEM "ext-1.0.dtd">
+
+	<!--
+		/** * Redirect links extension manifest for PunBB * *
+		@copyright Copyright (C) 2011 hcs, partially based on code copyright
+		(C) 2011 punbb.informer.com * @license
+		http://www.gnu.org/licenses/gpl.html GPL version 2 or higher *
+		@package hcs_redirect_links */
+	-->
+
+<extension engine="1.0">
+	<id>hcs_redirect_links</id>
+	<title>Редиректные ссылки</title>
+	<version>1.2.3</version>
+	<description>Расширение позволяет настраивать на форуме редирект для внешних ссылок. Перенаправляются ссылки оставленные пользователями в сообщениях и в подписях в профиле. Перенаправление призводится в новом окне, таким образом пользователь остается на сайте. В панели администратора доступна статистика по переходам.</description>
+	<author>hcs</author>
+
+	<minversion>1.4RC2</minversion>
+	<maxtestedon>1.4</maxtestedon>
+
+	<install><![CDATA[
+// Setup main table
+if (!$forum_db->table_exists('hcs_redirect_links'))
+{
+	$schema = array(
+		'FIELDS'			=> array(
+			'id'				=> array(
+				'datatype'		=> 'SERIAL',
+				'allow_null'	=> false
+			),
+			'counter'			=> array(
+				'datatype'		=> 'INT(10) UNSIGNED',
+				'allow_null'	=> false,
+				'default'		=> '0'
+			),
+			'link'			=> array(
+				'datatype'		=> 'VARCHAR(255)',
+				'allow_null'	=> false,
+				'default'		=> '\'\''
+			),
+			'post_id'			=> array(
+				'datatype'		=> 'INT(10) UNSIGNED',
+				'allow_null'	=> false,
+				'default'		=> '0'
+			),
+			'user_id'			=> array(
+				'datatype'		=> 'INT(10) UNSIGNED',
+				'allow_null'	=> false,
+				'default'		=> '0'
+			),
+		),
+		'PRIMARY KEY'	=> array('id'),
+		'INDEXES'		=> array(
+			'link_idx'		=> array('link', 'post_id', 'user_id' )
+		)
+	);
+	$forum_db->create_table('hcs_redirect_links', $schema);
+}
+
+$query = array(
+	'SELECT'	=> 'conf_name',
+	'FROM'		=> 'config',
+	'WHERE'		=> 'conf_name = \'o_hcs_redirect_links\'',
+);
+
+$result = $forum_db->query_build($query) or error(__FILE__, __LINE__);
+
+if (!$forum_db->num_rows($result)) {
+	$query = array(
+		'INSERT'	=> 'conf_name, conf_value',
+		'INTO'		=> 'config',
+		'VALUES'	=> '\'o_hcs_redirect_links\', \'\''
+	);
+
+	$forum_db->query_build($query) or error(__FILE__, __LINE__);
+
+}
+	]]></install>
+
+	<uninstall><![CDATA[
+$forum_db->drop_table('hcs_redirect_links');
+$query = array(
+	'DELETE'	=> 'config',
+	'WHERE'		=> 'conf_name = \'o_hcs_redirect_links\''
+);
+$forum_db->query_build($query) or error(__FILE__, __LINE__);
+	]]></uninstall>
+
+	<hooks>
+
+		<hook id="ca_new_function"><![CDATA[
+if (file_exists($ext_info['path'].'/lang/'.$forum_user['language'].'.php'))
+	require $ext_info['path'].'/lang/'.$forum_user['language'].'.php';
+else
+	require $ext_info['path'].'/lang/English.php';
+		]]></hook>
+
+		<hook id="ca_fn_generate_admin_menu_new_sublink"><![CDATA[
+if (FORUM_PAGE_SECTION == 'management') {
+	$forum_page['admin_submenu']['redirect_links'] = '<li class="'.((FORUM_PAGE == 'admin-redirect-links') ? 'active' : 'normal').((empty($forum_page['admin_submenu'])) ? ' first-item' : '').'"><a href="'.forum_link($forum_url['hcs_admin_redirect']).'">'.$GLOBALS['lang_redirect_links']['Redirect links'].'</a></li>';
+}		
+		]]></hook>
+
+		<hook id="ps_start"><![CDATA[
+require $ext_info['path'].'/parser.php';
+		]]></hook>
+
+		<hook id="ps_handle_url_tag_start"><![CDATA[
+$tmp_link = $link;
+		]]></hook>
+
+		<hook id="ps_handle_url_tag_end"><![CDATA[
+global $forum_user;
+if ($forum_user['is_guest'])
+{ 
+	check_redirect(& $url, & $link, & $full_url, $tmp_link);
+}
+		]]></hook>
+
+		<hook id="re_rewrite_rules"><![CDATA[
+$forum_rewrite_rules['/^redirect[\/_-]?([a-z0-9]+)[\/_-]?([0-9]+)(\.html?|\/)?$/i'] = 'misc.php?action=redirect&hash=$1&pid=$2';
+$forum_rewrite_rules['/^redirect[\/_-]?([a-z0-9]+)[\/_-]?s([0-9]+)(\.html?|\/)?$/i'] = 'misc.php?action=redirect&hash=$1&sig=$2';
+$forum_rewrite_rules['/^redirect[\/_-]?([a-z0-9]+)[\/_-]?([0-9]+)[\/_-]?s([0-9]+)(\.html?|\/)?$/i'] = 'misc.php?action=redirect&hash=$1&pid=$2&sig=$3';
+$forum_rewrite_rules['/^redirect_confirm(\.html?|\/)?$/i'] = 'misc.php?action=redirect_confirm';
+$forum_rewrite_rules['/^redirect[\/_-]?([a-z0-9]+)[\/_-]?u([0-9]+)(\.html?|\/)?$/i'] = 'misc.php?action=redirect&hash=$1&uid=$2';
+		]]></hook>
+
+		<hook id="co_modify_url_scheme"><![CDATA[
+
+if (file_exists($ext_info['path'].'/url/'.$forum_config['o_sef'].'.php'))
+	require $ext_info['path'].'/url/'.$forum_config['o_sef'].'.php';
+else
+	require $ext_info['path'].'/url/Default.php';
+
+		]]></hook>
+
+		<hook id="mi_new_action"><![CDATA[
+require $ext_info['path'].'/common.php';
+		]]></hook>
+
+		<hook id="ps_parse_signature_start"><![CDATA[
+$GLOBALS['hcs_sig_redirect'] = true;
+		]]></hook>
+
+		<hook id="ps_parse_signature_post_bbcode"><![CDATA[
+unset($GLOBALS['hcs_sig_redirect']);
+		]]></hook>
+
+		<hook id="aop_new_section"><![CDATA[
+if ($section == 'redirect')
+	require $ext_info['path'].'/redirect_links.php';
+		]]></hook>
+
+		<hook id="vt_post_loop_start"><![CDATA[
+if ($cur_post['url'] != '')
+	$cur_post['url'] = forum_link($forum_url['hcs_redirect_uid'], array(forum_hash($cur_post['url'], ''),$cur_post['poster_id']));
+		]]></hook>
+
+		<hook id="pf_new_action"><![CDATA[
+if ($user['url'] != '')
+	$user_url = $user['url']; 
+		]]></hook>
+
+		<hook id="pf_view_details_pre_header_load"><![CDATA[
+if (isset($forum_page['url']))
+{
+
+	if (!isset($lang_redirect_links))
+	{
+		if (file_exists($ext_info['path'].'/lang/'.$forum_user['language'].'.php'))
+			require_once $ext_info['path'].'/lang/'.$forum_user['language'].'.php';
+		else
+			require_once $ext_info['path'].'/lang/English.php';
+	}
+
+	$hash = forum_link($forum_url['hcs_redirect_uid'], array(forum_hash($user_url, ''),$user['id']));
+	$forum_page['url'] = '<a href="'.$hash.'" class="external url" rel="me">'.$lang_redirect_links['External link'].'</a>';
+	$forum_page['user_contact']['website'] = '<li><span>'.$lang_profile['Website'].': '.$forum_page['url'].'</span></li>';
+}
+		]]></hook>
+
+		<hook id="fn_redirect_template_loaded"><![CDATA[
+if (isset($GLOBALS['action']) && $GLOBALS['action'] == 'redirect_confirm'){
+	define('FORUM_ALLOW_INDEX', 0);
+	$forum_head['robots'] = '<meta name="ROBOTS" content="NOINDEX, NOFOLLOW" />';
+}
+		]]></hook>
+
+	</hooks>
+</extension>
