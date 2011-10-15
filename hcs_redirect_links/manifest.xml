@@ -12,7 +12,7 @@
 <extension engine="1.0">
 	<id>hcs_redirect_links</id>
 	<title>Редиректные ссылки</title>
-	<version>1.2.3</version>
+	<version>1.2.4</version>
 	<description>Расширение позволяет настраивать на форуме редирект для внешних ссылок. Перенаправляются ссылки оставленные пользователями в сообщениях и в подписях в профиле. Перенаправление призводится в новом окне, таким образом пользователь остается на сайте. В панели администратора доступна статистика по переходам.</description>
 	<author>hcs</author>
 
@@ -153,7 +153,7 @@ if ($section == 'redirect')
 		]]></hook>
 
 		<hook id="vt_post_loop_start"><![CDATA[
-if ($cur_post['url'] != '')
+if ($cur_post['url'] != '' AND $forum_user['is_guest'])
 	$cur_post['url'] = forum_link($forum_url['hcs_redirect_uid'], array(forum_hash($cur_post['url'], ''),$cur_post['poster_id']));
 		]]></hook>
 
