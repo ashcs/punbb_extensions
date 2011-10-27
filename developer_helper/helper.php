@@ -24,7 +24,7 @@ class App {
 	
 	private static $_autoload_folders = 'controller|model|view|module';
 					
-	public static $admin_section = false, $profile_section = false; 
+	public static $admin_section = false, $profile_section = false, $is_ajax = false; 
 	
     public static function init()
     {
@@ -46,6 +46,10 @@ class App {
         self::$autoloading['Upload'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'upload.php';
         self::$autoloading['Base'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'base.php';
         self::$autoloading['Registry'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'registry.php';
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')
+        {
+        	self::$is_ajax = TRUE;
+        }
     }	
     
 
@@ -297,7 +301,12 @@ class App {
 		App::$forum_page['page_post']['paging'] = '<p class="paging"><span class="pages">'.App::$lang_common['Pages'].'</span> '.paginate(App::$forum_page['num_pages'], App::$forum_page['page'], $url, App::$lang_common['Paging separator'], $params).'</p>';
 	}
 	
-	
+	public static function send_json($params)
+	{
+		header('Content-type: text/html; charset=utf-8');
+		echo json_encode($params);
+		die;
+	}
 }
 	
 App::init();	
