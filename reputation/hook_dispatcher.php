@@ -4,8 +4,7 @@
  * 
  * 
  * @author hcs
- * @copyright (C) 2011 hcs reputation extension for PunBB
- * @copyright Copyright (C) 2011 PunBB
+ * @copyright (C) 2011 hcs reputation extension for PunBB Copyright (C) 2011 PunBB
  * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  * @package reputation
  */
@@ -17,9 +16,13 @@ class Reputation_Hook_Dispatcher extends Base
 	 */
 	public function front_end_init()
 	{
+		App::$forum_loader->add_css('.rep_plus, .rep_minus { font-style:italic; font-size: 90%; border-radius: 8px 8px; background-color:#F3F3F3; padding: 6px 12px !important;} .rep_plus_head { font-style:normal; color:#008000; } .rep_minus_head { font-style:normal; color:#FF0000; }', array('type' => 'inline'));
+		$GLOBALS['ext_jQuery_UI']->add_jQuery_UI_style(' .ui-widget {font-size: 0.8em;} .validateTips { border: 1px solid transparent; padding: 0.3em; }', 'ui_dailog_02'); // добавляем переопределение стиля в footer
+		
 		App::load_language('reputation.reputation');
 		App::inject_hook('vt_qr_get_posts',array(
 			'name'	=>	'reputation',
+			'url'	=>	$GLOBALS['ext_info']['url'],
 			'code'	=>	'Reputation_Hook_Dispatcher::vt_qr_get_posts($query, $forum_user[\'id\'], App::$now, $posts_id);'
 		));
 		App::inject_hook('vt_row_pre_post_actions_merge',array(
@@ -31,7 +34,14 @@ class Reputation_Hook_Dispatcher extends Base
 			'code'	=>	'Reputation_Hook_Dispatcher::vt_row_pre_display($forum_page, $cur_post);'
 		));		
 	}
-	
+
+	/**
+	 * Hook vt_row_pre_display handler
+	 * Create block reputation info
+	 * 
+	 * @param array $forum_page
+	 * @param array $cur_post
+	 */	
 	public function vt_row_pre_display(& $forum_page, $cur_post)
 	{
 		$bufer = array ('minus' => array(), 'plus' => array());
@@ -49,35 +59,63 @@ class Reputation_Hook_Dispatcher extends Base
 				}
 			}
 
+			$reputation = array();
+			
 			if (!empty($bufer['plus']))
 			{
-				$forum_page['message']['reputation'] = '<span class="rep_plus">Положительно оценили:<br/>'.implode(', ', $bufer['plus']).'</span>';
+				$reputation[] = '<div class="rep_plus"><span class="rep_plus_head">'.App::$lang['Positive assessed'].'</span><span>'.implode(', ', $bufer['plus']).'</span></div>';
 			}
 			
 			if (!empty($bufer['minus']))
 			{
-				$forum_page['message']['reputation'] .= '<span class="rep_plus">Отрицательно оценили:<br/>'.implode(', ', $bufer['minus']).'</span>';
+				$reputation[] = '<div class="rep_minus"><span class="rep_minus_head">'.App::$lang['Negative assessed'].'</span><span>'.implode(', ', $bufer['minus']).'</span></div>';
 			}
 					
-			if (!empty($forum_page['message']['reputation']))
+			if (!empty($reputation))
 			{
 				if (!isset($forum_page['message']['signature']))
 				{
-					$forum_page['message']['reputation'] = '<div class="sig-content"><span class="sig-line"><!-- --></span>'.$forum_page['message']['reputation'].'</div>';
+					$forum_page['message']['reputation'] = '<div class="sig-content"><span class="sig-line"><!-- --></span>'.implode(',', $reputation).'</div>';
 				}
 				else
 				{
-					$forum_page['message']['reputation'] = '<div class="sig-content">'.$forum_page['message']['reputation'].'</div>';
+					$forum_page['message']['reputation'] = '<div class="sig-content">'.implode(',', $reputation).'</div>';
 				}
 			}	
 		}
 	}
 	
+	/**
+	 * Hook vt_qr_get_posts handler
+	 * Change standart query for collect reputation info
+	 * Prepare UI dialog
+	 * 
+	 * @param array $query
+	 * @param int $user_id
+	 * @param int $time
+	 * @param int $posts_id
+	 */
 	public function vt_qr_get_posts(& $query, $user_id, $time, $posts_id)
 	{
+		$GLOBALS['ext_jQuery_UI']->add_jQuery_UI("Dialog");
+		$GLOBALS['ext_jQuery_UI']->add_jQuery_UI("Fade");
+		$GLOBALS['ext_jQuery_UI']->add_jQuery_UI("Resizable");
+		$GLOBALS['ext_jQuery_UI']->add_jQuery_UI("Draggable");
+		$GLOBALS['ext_jQuery_UI']->add_jQuery_UI("Button");
+		
+		$rep_js_env = '
+    		PUNBB.env.rep_vars = {
+				"Reason" : "'.App::$lang['Form reason'].'",
+		    };';
+
+		App::$forum_loader->add_js($rep_js_env, array('type' => 'inline'));
+		App::$forum_loader->add_js($GLOBALS['ext_info']['url'].'/js/reputation.min.js', array('type' => 'url'));
+		
+		
+			
 		$GLOBALS['forum_page']['reputation_info'] = array();
 		$query_rep = array(
-			'SELECT'	=> 'r.post_id, u.username, r.from_user_id, r.rep_plus, r.rep_minus',
+			'SELECT'	=> 'r.post_id, u.username, r.from_user_id, r.rep_plus, r.rep_minus, r.time AS rep_time',
 			'FROM'		=> 'reputation AS r',
 			'JOINS'		=> array(
 				array(
@@ -100,6 +138,8 @@ class Reputation_Hook_Dispatcher extends Base
 			'LEFT JOIN'	=> 'reputation AS r',
 			'ON'			=> '(r.post_id = p.id AND r.from_user_id = '.$user_id.') OR (r.user_id = u.id AND r.from_user_id = '.$user_id.' AND r.time > '. $time.')'
 		);	
+		
+		$GLOBALS['forum_page']['time'] = App::$now - App::$forum_config['o_reputation_timeout']*60;
 	}
 	
 	/**
@@ -115,11 +155,11 @@ class Reputation_Hook_Dispatcher extends Base
 		{
 			App::$forum_page['author_info']['reputation'] = '<li><span><a href="'.forum_link(App::$forum_url['reputation_view'], $cur_post['poster_id']).'">'.App::$lang['Reputation'].'</a> : ';
 			
-			if(!$forum_user['is_guest'] AND $forum_user['id'] != $cur_post['poster_id'] AND $cur_post['rep_id'] == NULL)
+			if(!$forum_user['is_guest'] AND $forum_user['id'] != $cur_post['poster_id'] AND $cur_post['rep_id'] == NULL)// AND $GLOBALS['forum_page']['reputation_info'][$cur_post['id']]['rep_time'] < $GLOBALS['forum_page']['time'])
 			{
 				if (App::$forum_user['g_rep_plus_min'] < App::$forum_user['num_posts'])
 				{
-					App::$forum_page['author_info']['reputation'] .= '<a href="'.forum_link(App::$forum_url['reputation_plus'], array($cur_post['id'],$cur_post['poster_id'])).'"><img src="'.forum_link('extensions/reputation').'/img/warn_add.gif" alt="+"></a>&nbsp;&nbsp;';
+					App::$forum_page['author_info']['reputation'] .= '<a class="rep_info_link" href="'.forum_link(App::$forum_url['reputation_plus'], array($cur_post['id'],$cur_post['poster_id'])).'"><img src="'.forum_link('extensions/reputation').'/img/warn_add.gif" alt="+"></a>&nbsp;&nbsp;';
 				}
 				
 				if (App::$forum_config['o_reputation_show_full']== '1' )
@@ -133,7 +173,7 @@ class Reputation_Hook_Dispatcher extends Base
  				
  				if (App::$forum_user['g_rep_minus_min'] < App::$forum_user['num_posts'])
  				{
- 					App::$forum_page['author_info']['reputation'] .= '&nbsp;&nbsp;<a href="'. forum_link(App::$forum_url['reputation_minus'], array($cur_post['id'],$cur_post['poster_id'])) .'"><img src="'.forum_link('extensions/reputation').'/img/warn_minus.gif" alt="-"></a></span></li>';
+ 					App::$forum_page['author_info']['reputation'] .= '&nbsp;&nbsp;<a class="rep_info_link" href="'. forum_link(App::$forum_url['reputation_minus'], array($cur_post['id'],$cur_post['poster_id'])) .'"><img src="'.forum_link('extensions/reputation').'/img/warn_minus.gif" alt="-"></a></span></li>';
  				}
  				 
     		}  

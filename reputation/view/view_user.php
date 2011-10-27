@@ -4,8 +4,8 @@
 		<table cellspacing="0">
 			<thead>
 				<tr>
-				<th class="tc3" style="width:15%"><?php echo App::$lang['From user'] ?></th>
-				<th class="tc3" style="width:15%"><?php echo App::$lang['For topic'] ?></th>
+				<th class="tc3"><?php echo App::$lang['From user'] ?></th>
+				<th class="tc3"><?php echo App::$lang['For topic'] ?></th>
 				<th class="tc3"  style="width:35%"><?php echo App::$lang['Reason'] ?></th>
 				<th class="tc3" style="text-align:center;"><?php echo App::$lang['Estimation'] ?></th>
 				<th class="tc3"><?php echo App::$lang['Date'] ?></th>

@@ -97,6 +97,7 @@ class Reputation_Controller_Reputation extends Controller
 	{
 		$target = $this->pre_process($action);
 		$errors = array();
+		
 		if (isset($_POST['form_sent']))
 		{
 			if ($this->add_voice($errors, $target, $action))
@@ -104,8 +105,31 @@ class Reputation_Controller_Reputation extends Controller
 	    		App::$forum_flash->add_info(App::$lang['Redirect Message']);
     			redirect(forum_link(App::$forum_url['post'], $this->pid), App::$lang['Redirect Message']);			
 			}
-		}		
+		}	
+			
 		App::$forum_page['form_action'] = forum_link(App::$forum_url['reputation_'.$action], array($this->pid, $this->uid));
+		
+		if (App::$is_ajax) 
+		{
+			if (empty($errors))
+			{
+				App::send_json(array(		
+					'csrf_token'=> generate_form_token(App::$forum_page['form_action']),
+					'title'		=> App::$lang['Reputation'],
+					'description'=> sprintf(App::$lang[ucfirst($action)], forum_htmlencode($target['username'])),
+					'user'		=>  $target['username'],
+					'cancel'	=>  forum_htmlencode(App::$lang_common['Cancel']),
+					'submit'	=>  forum_htmlencode(App::$lang_common['Submit'])
+				));
+			}
+			else 
+			{
+				App::send_json(array(
+					'error'	=> implode('<br />',$errors),
+				));				
+			}
+		}		
+		
 		View::$instance = View::factory($this->view.'form', array('heading' => sprintf(App::$lang[ucfirst($action)],forum_htmlencode($target['username']))));
 		View::$instance->errors = View::factory($this->view.'errors', array('errors'=>$errors, 'head' => App::$lang['Errors']));
 	}
@@ -202,8 +226,7 @@ class Reputation_Controller_Reputation extends Controller
 
 		if (($method == 'plus' AND App::$forum_user['g_rep_plus_min'] > App::$forum_user['num_posts']) OR ($method == 'minus' AND App::$forum_user['g_rep_minus_min'] > App::$forum_user['num_posts']))
 		{
-    		App::$forum_flash->add_error(App::$lang['Small Number of post']);
-    		redirect(forum_link(App::$forum_url['post'], $this->pid), App::$lang['Small Number of post']);			
+			message(App::$lang['Small Number of post']);
 		}
 
 		$time = App::$now - App::$forum_config['o_reputation_timeout']*60;	
@@ -211,18 +234,14 @@ class Reputation_Controller_Reputation extends Controller
 		if (FALSE === ($target = $this->reputation->get_post_info($this->pid, $this->uid, App::$forum_user['id'], $time)))
 			message(App::$lang_common['Bad request']);
 			
-		if ($target['time']) 
+		if ($target['time'] AND $target['time'] > $time) 
 		{
-			if ($target['time'] > $time)
-			{
-				App::$forum_flash->add_error(sprintf(App::$lang['Timeout error'],$target['username'],floor(((($target['time'] + App::$forum_config['o_reputation_timeout'] * 60) - App::$now) / 60))));
-    			redirect(forum_link(App::$forum_url['post'], $this->pid), sprintf(App::$lang['Timeout error'], $target['username'],floor((($target['time'] + App::$forum_config['o_reputation_timeout'] * 60 ) - App::$now))));
-			}
-			else 
-			{
-	    		App::$forum_flash->add_error(App::$lang['Error reputation revote']);
-    			redirect(forum_link(App::$forum_url['post'], $this->pid), App::$lang['Error reputation revote']);
-			}
+			message(sprintf(App::$lang['Timeout error'],$target['username'],floor(((($target['time'] + App::$forum_config['o_reputation_timeout'] * 60) - App::$now) / 60))));
+		}
+
+		if ($target['post_id'] AND $this->pid == $target['post_id'])
+		{
+			message(App::$lang['Error reputation revote']);
 		}			
 			
 		if ($target['rep_enable'] != 1)

@@ -17,7 +17,7 @@ return array(
  	'Plus'				=> 'Add of a reputation to user %s',
 	'Minus'				=> 'Reduction of a reputation to user %s',
 	'Form reason'		=> 'The reason of change of reputation', 
-	'Redirect Message'	=> 'The reputation has been successfully changed. Redirecting...',
+	'Redirect Message'	=> 'The reputation has been successfully changed.',
 	'Instructions'		=> 'You will be redirected back to topic page',
 	'Errors'			=> '<strong>Warning!</strong> The following errors must be corrected before your message can be posted:',
 	'User reputation' 	=> 'Reputation of the user %s',
@@ -71,8 +71,10 @@ return array(
 'Redirect info' => 'You will be redirected to a page listing',
 'No comment' => 'You must enter the answer',
 'Too long comment' => 'The answer is over the allowable size of %s characters',
-'Comment add redirect' => 'The answer is added. Redirecting ...',
+'Comment add redirect' => 'The answer is added.',
 'Message on topic'		=> 'Reply in topic %s',
 'Display settings'		=>	'Display settings',
+'Negative assessed'	=> '- ',
+'Positive assessed'	=> '+ ',
 	
 );

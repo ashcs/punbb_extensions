@@ -1,3 +1,4 @@
+	<div id="rep_form">
 	<div class="main-head">
 		<h2 class="hn"><span><?php echo $heading ?></span></h2>
 	</div>
@@ -17,7 +18,8 @@
 			</div>
 			</fieldset>
 			<div class="frm-buttons">
-				<p class="postlink conr"><input type="submit" name="submit" value="<?php echo App::$lang_common['Submit'] ?>"  /> <?php echo App::$lang['Instructions'] ?></p>
+				<p class="postlink conr"><input type="submit" name="submit" value="<?php echo App::$lang_common['Submit'] ?>"  /></p>
 			</div>
 		</form>
+	</div>
 	</div>

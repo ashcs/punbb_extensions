@@ -10,12 +10,12 @@
 		<table cellspacing="0">
 			<thead>
 				<tr>
-				<th class="tc3" style="width:15%"><?php echo App::$lang['From user'] ?></th>
-				<th class="tc3" style="width:15%"><?php echo App::$lang['For topic'] ?></th>
-				<th class="tc3"  style="width:35%"><?php echo App::$lang['Reason'] ?></th>
-				<th class="tc3" style="text-align:center;"><?php echo App::$lang['Estimation'] ?></th>
-				<th class="tc3"><?php echo App::$lang['Date'] ?></th>
-				<th class="tc3"><?php echo App::$lang['Delete'] ?></th>
+				<th class="tc1"><?php echo App::$lang['From user'] ?></th>
+				<th class="tc3" style="width:20%"><?php echo App::$lang['For topic'] ?></th>
+				<th class="tc3"  style="width:28%"><?php echo App::$lang['Reason'] ?></th>
+				<th class="tc1" style="width:1.5em;text-align:center;">+/-</th>
+				<th class="tc3" style="width:4.5em;text-align:center;"><?php echo App::$lang['Date'] ?></th>
+				<th class="tc3" style="width:4em;text-align:center;"><?php echo App::$lang['Delete'] ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -40,7 +40,7 @@
 			echo '<div class="ct-box info-box">'.parse_message($cur_rep['comment'], 0).'</div>';
 		else {
 			if ($cur_rep['user_id'] == App::$forum_user['id']){
-				echo '<div class="ct-box info-box"><cite><a href="'.forum_link(App::$forum_url['reputation_comment'], $cur_rep['id']) . '">'.App::$lang['Comment'].'</a></cite></div>';
+				echo '<div class="ct-box info-box"><cite><a class="rep_info_link" href="'.forum_link(App::$forum_url['reputation_comment'], $cur_rep['id']) . '">'.App::$lang['Comment'].'</a></cite></div>';
 			}			
 		}
 	}

@@ -95,7 +95,7 @@ class Reputation_Model_Reputation
 	public function get_post_info($post_id, $user_id, $from_user_id, $time)
 	{
 		$query = array(
-			'SELECT'	=> 'p.poster_id, p.id, p.topic_id, t.subject, u.rep_enable, u.username, r.time',
+			'SELECT'	=> 'p.poster_id, p.id, p.topic_id, t.subject, u.rep_enable, u.username, r.time, r.post_id',
 			'FROM'		=> 'posts AS p',
 			'JOINS'		=> array(
 				array(
@@ -108,7 +108,7 @@ class Reputation_Model_Reputation
 				),
 				array(
 					'LEFT JOIN'		=> 'reputation as r',
-					'ON'			=> 'r.from_user_id ='.$from_user_id .' AND r.user_id = u.id  AND r.time > '. $time
+					'ON'			=> '(r.from_user_id ='.$from_user_id .' AND r.user_id = u.id AND r.post_id ='.$post_id.') OR (r.from_user_id ='.$from_user_id .' AND r.user_id = u.id  AND r.time > '. $time.')'
 				)
 			),
 			'WHERE'		=> 'p.id='.$post_id.' AND p.poster_id='. $user_id,
