@@ -13,6 +13,8 @@
 // Make sure no one attempts to run this script "directly"
 defined('FORUM') OR die();
 
+global $forum_user;
+
 if (file_exists($ext_info['path'].'/lang/'.$forum_user['language'].'.php'))
 {
 	require_once $ext_info['path'].'/lang/'.$forum_user['language'].'.php';
