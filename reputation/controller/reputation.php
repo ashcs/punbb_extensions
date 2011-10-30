@@ -39,6 +39,22 @@ class Reputation_Controller_Reputation extends Controller
 
 	public function view()
 	{
+		if (isset($this->id))
+		{
+			if (FALSE === ($user_rep = $this->reputation->get_by_id($this->id)))
+				message(App::$lang_common['Bad request']);
+				
+			global $smilies;
+			if (!defined('FORUM_PARSER_LOADED'))
+			{
+				require FORUM_ROOT.'include/parser.php';
+			}	
+			$user_rep['reason'] = parse_message($user_rep['reason'], 0);
+				
+				
+			App::send_json(array('message' => $user_rep['reason']));
+		}
+		
 		if (FALSE === ($user_rep = $this->reputation->get_user($this->uid)))
 			message(App::$lang_common['Bad request']); 
 

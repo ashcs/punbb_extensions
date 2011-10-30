@@ -9,8 +9,8 @@
  */
 
 $forum_url['reputation_view'] = 'reputation/view/$1/';
+$forum_url['reputation_by_id'] = 'reputation/id/$1/';
 $forum_url['reputation_delete'] = 'reputation/delete/$1/';
 $forum_url['reputation_plus'] = 'reputation/plus/$1/$2/';
 $forum_url['reputation_minus'] = 'reputation/minus/$1/$2/';
 $forum_url['reputation_comment']	= 'reputation/reply/$1/';
-?>

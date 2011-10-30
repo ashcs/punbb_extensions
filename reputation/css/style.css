@@ -1,0 +1,53 @@
+#tooltip_content {
+	background-color: #FFF;
+}
+table.rep_popup td {
+	border-width: 0; 
+	padding: 0 0;
+}
+table.rep_popup {
+	width: auto;
+	max-width:400px;
+	position: absolute;
+	display: none;
+	z-index: 50;
+	border-collapse: collapse;
+	font-size:0.8em;
+}
+.rep_popup td.corner {
+	height: 15px;
+	width: 19px;
+}
+.rep_popup td#topleft {
+	background-image: url(/extensions/reputation/js/img/bubble-1.png);
+	background-repeat:none;
+}
+.rep_popup td.top {
+	background-image: url(/extensions/reputation/js/img/bubble-2.png);
+}
+.rep_popup td#topright {
+	background-image: url(/extensions/reputation/js/img/bubble-3.png);
+}
+.rep_popup td.left {
+	background-image: url(/extensions/reputation/js/img/bubble-4.png);
+}
+.rep_popup td.right {
+	background-image: url(/extensions/reputation/js/img/bubble-5.png);
+}
+.rep_popup td#bottomleft {
+	background-image: url(/extensions/reputation/js/img/bubble-6.png);
+}
+.rep_popup td.bottom {
+	background-image: url(/extensions/reputation/js/img/bubble-7.png);
+	text-align: center;
+}.rep_popup td.bottom span {
+	display: block;
+	margin: 0 auto;
+	width: 30px;
+	height: 29px;
+	background-image: url(/extensions/reputation/js/img/bubble-tail2.png);
+}
+
+.rep_popup td#bottomright {
+	background-image: url(/extensions/reputation/js/img/bubble-8.png); 
+}

@@ -8,15 +8,15 @@
  * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  * @package reputation
  */
-class Reputation_Hook_Dispatcher extends Base
-{
+class Reputation_Hook_Dispatcher extends Base {
 	/**
  	 * Front-end hook dispatcher
 	 * Inject hooks for showing reputation in topic messages
 	 */
 	public function front_end_init()
 	{
-		App::$forum_loader->add_css('.rep_plus, .rep_minus { font-style:italic; font-size: 90%; border-radius: 8px 8px; background-color:#F3F3F3; padding: 6px 12px !important;} .rep_plus_head { font-style:normal; color:#008000; } .rep_minus_head { font-style:normal; color:#FF0000; }', array('type' => 'inline'));
+		App::$forum_loader->add_css('.rep_plus_minus { font-style:italic; font-size: 90%; border-radius: 8px 8px; background-color:#F3F3F3; padding: 6px 12px !important;} .rep_plus_head { font-style:normal; color:#008000; } .rep_minus_head { font-style:normal; color:#FF0000; }', array('type' => 'inline'));
+		App::$forum_loader->add_css('extensions/reputation/css/style.css', array('type' => 'url'));
 		$GLOBALS['ext_jQuery_UI']->add_jQuery_UI_style(' .ui-widget {font-size: 0.8em;} .validateTips { border: 1px solid transparent; padding: 0.3em; }', 'ui_dailog_02'); // добавляем переопределение стиля в footer
 		
 		App::load_language('reputation.reputation');
@@ -51,11 +51,11 @@ class Reputation_Hook_Dispatcher extends Base
 			{
 				if ($cur_rep_info['rep_minus'])
 				{
-					$bufer['minus'][]= '<a href="'.forum_link(App::$forum_url['user'], $cur_rep_info['from_user_id']).'">'.forum_htmlencode($cur_rep_info['username']).'</a>'; 
+					$bufer['minus'][]= '<a href="'.forum_link(App::$forum_url['user'], $cur_rep_info['from_user_id']).''.$cur_rep_info['from_user_id'].'" rel="'.forum_link(App::$forum_url['reputation_by_id'], $cur_rep_info['rep_id']).'">'.forum_htmlencode($cur_rep_info['username']).'</a>';
 				}
 				if ($cur_rep_info['rep_plus'])
 				{
-					$bufer['plus'][]= '<a href="'.forum_link(App::$forum_url['user'], $cur_rep_info['from_user_id']).'">'.forum_htmlencode($cur_rep_info['username']).'</a>';
+					$bufer['plus'][]= '<a href="'.forum_link(App::$forum_url['user'], $cur_rep_info['from_user_id']).''.$cur_rep_info['from_user_id'].'" rel="'.forum_link(App::$forum_url['reputation_by_id'], $cur_rep_info['rep_id']).'">'.forum_htmlencode($cur_rep_info['username']).'</a>';
 				}
 			}
 
@@ -63,23 +63,23 @@ class Reputation_Hook_Dispatcher extends Base
 			
 			if (!empty($bufer['plus']))
 			{
-				$reputation[] = '<div class="rep_plus"><span class="rep_plus_head">'.App::$lang['Positive assessed'].'</span><span>'.implode(', ', $bufer['plus']).'</span></div>';
+				$reputation[] = '<div class="rep_plus_minus"><span class="rep_plus_head">'.App::$lang['Positive assessed'].'</span><span>'.implode(', ', $bufer['plus']).'</span></div>';
 			}
 			
 			if (!empty($bufer['minus']))
 			{
-				$reputation[] = '<div class="rep_minus"><span class="rep_minus_head">'.App::$lang['Negative assessed'].'</span><span>'.implode(', ', $bufer['minus']).'</span></div>';
+				$reputation[] = '<div class="rep_plus_minus"><span class="rep_minus_head">'.App::$lang['Negative assessed'].'</span><span>'.implode(', ', $bufer['minus']).'</span></div>';
 			}
 					
 			if (!empty($reputation))
 			{
 				if (!isset($forum_page['message']['signature']))
 				{
-					$forum_page['message']['reputation'] = '<div class="sig-content"><span class="sig-line"><!-- --></span>'.implode(',', $reputation).'</div>';
+					$forum_page['message']['reputation'] = '<div class="sig-content"><span class="sig-line"><!-- --></span>'.implode('<br /> ', $reputation).'</div>';
 				}
 				else
 				{
-					$forum_page['message']['reputation'] = '<div class="sig-content">'.implode(',', $reputation).'</div>';
+					$forum_page['message']['reputation'] = '<div class="sig-content">'.implode('<br /> ', $reputation).'</div>';
 				}
 			}	
 		}
@@ -115,7 +115,7 @@ class Reputation_Hook_Dispatcher extends Base
 			
 		$GLOBALS['forum_page']['reputation_info'] = array();
 		$query_rep = array(
-			'SELECT'	=> 'r.post_id, u.username, r.from_user_id, r.rep_plus, r.rep_minus, r.time AS rep_time',
+			'SELECT'	=> 'r.id AS rep_id, r.post_id, u.username, r.from_user_id, r.rep_plus, r.rep_minus, r.time AS rep_time',
 			'FROM'		=> 'reputation AS r',
 			'JOINS'		=> array(
 				array(
@@ -247,7 +247,7 @@ class Reputation_Hook_Dispatcher extends Base
 	}	
 
 	/**
-	 * 
+	 * Hook agr_edit_end_qr_update_group handler
 	 * @param unknown_type $query
 	 * @param unknown_type $is_admin_group
 	 */
@@ -259,14 +259,27 @@ class Reputation_Hook_Dispatcher extends Base
 		$query['SET'] .= ', g_rep_enable= '.$rep_enable.', g_rep_minus_min='.$rep_minus_min.', g_rep_plus_min='.$rep_plus_min;
 	}
 	
+	/**
+	 * Hook aop_features_validation handler
+	 * @param $form
+	 */
 	public function aop_features_validation(& $form)
 	{
-		if (!isset($form['reputation_enabled']) || $form['reputation_enabled'] != '1') $form['reputation_enabled'] = '0';
-		if (!isset($form['reputation_show_full']) || $form['reputation_show_full'] != '1') $form['reputation_show_full'] = '0';
+		if (!isset($form['reputation_enabled']) || $form['reputation_enabled'] != '1')
+		{
+			$form['reputation_enabled'] = '0';
+		}
+		if (!isset($form['reputation_show_full']) || $form['reputation_show_full'] != '1')
+		{
+			$form['reputation_show_full'] = '0';
+		}
 		$form['reputation_maxmessage'] = intval($form['reputation_maxmessage']);
 		$form['reputation_timeout'] = intval($form['reputation_timeout']);		
 	}
 	
+	/**
+	 * Profile dispatcher init
+	 */
 	public function profile_init()
 	{
 		App::load_language('reputation.reputation');
@@ -292,6 +305,11 @@ class Reputation_Hook_Dispatcher extends Base
 		));				
 	}		
 
+	/**
+	 * Hook pf_change_details_settings_local_fieldset_end handler
+	 * @param array $user 
+	 * @param array $lang_profile 
+	 */
 	public function pf_change_details_settings_local_fieldset_end($user, $lang_profile)
 	{
 		$forum_page['group_count'] = $forum_page['item_count'] = 0;
@@ -301,10 +319,12 @@ class Reputation_Hook_Dispatcher extends Base
 	
 	public function pf_change_details_settings_validation($user, & $form)
 	{
-		if (App::$forum_user['is_admmod'] && $user['id'] != App::$forum_user['id']) {
+		if (App::$forum_user['is_admmod'] && $user['id'] != App::$forum_user['id'])
+		{
 			$form['rep_disable_adm'] = (isset($_POST['form']['rep_disable_adm'])) ? 1 :0;
 		}
-		else { 
+		else 
+		{ 
 		 	$form['rep_enable'] = (isset($_POST['form']['rep_enable'])) ? 1 :0; 
 		}
 	}	

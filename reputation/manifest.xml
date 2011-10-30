@@ -16,7 +16,7 @@
 <extension engine="1.0">
 	<id>reputation</id>
 	<title>Reputation</title>
-	<version>4.2.0</version>
+	<version>4.2.1</version>
 	<description><![CDATA[Allow users to give reputation points to other users. Users necessarily specify the reason of change of reputation and can look who it changed. Admins can delete any reputation any users.]]></description>
 	<author>hcs</author>
 	<minversion>1.4RC1</minversion>
