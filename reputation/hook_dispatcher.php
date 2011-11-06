@@ -341,7 +341,7 @@ class Reputation_Hook_Dispatcher extends Base {
 		}
 		else
 		{			
-			App::$forum_page['user_info']['reputation'] = '<li><span><a href="'.forum_link(App::$forum_url['reputation_view'], $user['id']).'">'.App::$lang['Reputation'].': <strong>[ + '.$user['rep_plus'].' | '. $user['rep_minus'].' - ]</strong></span></li></a> ';
+		    App::$forum_page['user_info']['reputation'] = '<li><span><a href="'.forum_link(App::$forum_url['reputation_view'], $user['id']).'">'.App::$lang['Reputation'].':</a> <strong>[ + '.$user['rep_plus'].' | '. $user['rep_minus'].' - ]</strong></span></li>';
 		}
 	}	
 	
