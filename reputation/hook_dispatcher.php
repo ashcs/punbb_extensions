@@ -51,11 +51,11 @@ class Reputation_Hook_Dispatcher extends Base {
 			{
 				if ($cur_rep_info['rep_minus'])
 				{
-					$bufer['minus'][]= '<a href="'.forum_link(App::$forum_url['user'], $cur_rep_info['from_user_id']).''.$cur_rep_info['from_user_id'].'" rel="'.forum_link(App::$forum_url['reputation_by_id'], $cur_rep_info['rep_id']).'">'.forum_htmlencode($cur_rep_info['username']).'</a>';
+					$bufer['minus'][]= '<a href="'.forum_link(App::$forum_url['user'], $cur_rep_info['from_user_id']).'" rel="'.forum_link(App::$forum_url['reputation_by_id'], $cur_rep_info['rep_id']).'">'.forum_htmlencode($cur_rep_info['username']).'</a>';
 				}
 				if ($cur_rep_info['rep_plus'])
 				{
-					$bufer['plus'][]= '<a href="'.forum_link(App::$forum_url['user'], $cur_rep_info['from_user_id']).''.$cur_rep_info['from_user_id'].'" rel="'.forum_link(App::$forum_url['reputation_by_id'], $cur_rep_info['rep_id']).'">'.forum_htmlencode($cur_rep_info['username']).'</a>';
+					$bufer['plus'][]= '<a href="'.forum_link(App::$forum_url['user'], $cur_rep_info['from_user_id']).'" rel="'.forum_link(App::$forum_url['reputation_by_id'], $cur_rep_info['rep_id']).'">'.forum_htmlencode($cur_rep_info['username']).'</a>';
 				}
 			}
 
@@ -109,7 +109,7 @@ class Reputation_Hook_Dispatcher extends Base {
 		    };';
 
 		App::$forum_loader->add_js($rep_js_env, array('type' => 'inline'));
-		App::$forum_loader->add_js($GLOBALS['ext_info']['url'].'/js/reputation.min.js', array('type' => 'url'));
+		App::$forum_loader->add_js($GLOBALS['ext_info']['url'].'/js/reputation.js', array('type' => 'url'));
 		
 		
 			
@@ -132,13 +132,20 @@ class Reputation_Hook_Dispatcher extends Base {
 		{
 			$GLOBALS['forum_page']['reputation_info'][$cur_rep['post_id']][] = $cur_rep;
 		}
-		
-		$query['SELECT'] .= ', u.rep_plus, u.rep_minus, u.rep_enable, u.rep_disable_adm, r.id as rep_id';
+/**
+ * 
+ * TODO:
+ * make query separately
+ * temporary fix
+ */		
+		//$query['SELECT'] .= ', u.rep_plus, u.rep_minus, u.rep_enable, u.rep_disable_adm, r.id as rep_id';
+		$query['SELECT'] .= ', u.rep_plus, u.rep_minus, u.rep_enable, u.rep_disable_adm';
+		/*
 		$query['JOINS'][] = array(
 			'LEFT JOIN'	=> 'reputation AS r',
 			'ON'			=> '(r.post_id = p.id AND r.from_user_id = '.$user_id.') OR (r.user_id = u.id AND r.from_user_id = '.$user_id.' AND r.time > '. $time.')'
 		);	
-		
+		*/
 		$GLOBALS['forum_page']['time'] = App::$now - App::$forum_config['o_reputation_timeout']*60;
 	}
 	
@@ -146,8 +153,8 @@ class Reputation_Hook_Dispatcher extends Base {
 	 * Hook vt_row_pre_post_actions_merge handler
 	 * Prepare user reputation for showing in topic messages
 	 * 
-	 * @param $cur_post
-	 * @param $forum_user
+	 * @param int $cur_post
+	 * @param array $forum_user
 	 */
 	public function vt_row_pre_post_actions_merge($cur_post, $forum_user)
 	{
@@ -155,7 +162,7 @@ class Reputation_Hook_Dispatcher extends Base {
 		{
 			App::$forum_page['author_info']['reputation'] = '<li><span><a href="'.forum_link(App::$forum_url['reputation_view'], $cur_post['poster_id']).'">'.App::$lang['Reputation'].'</a> : ';
 			
-			if(!$forum_user['is_guest'] AND $forum_user['id'] != $cur_post['poster_id'] AND $cur_post['rep_id'] == NULL)// AND $GLOBALS['forum_page']['reputation_info'][$cur_post['id']]['rep_time'] < $GLOBALS['forum_page']['time'])
+			if(!$forum_user['is_guest'] AND $forum_user['id'] != $cur_post['poster_id'])// AND $cur_post['rep_id'] == NULL)// AND $GLOBALS['forum_page']['reputation_info'][$cur_post['id']]['rep_time'] < $GLOBALS['forum_page']['time'])
 			{
 				if (App::$forum_user['g_rep_plus_min'] < App::$forum_user['num_posts'])
 				{
@@ -227,7 +234,7 @@ class Reputation_Hook_Dispatcher extends Base {
 	 * Hook agr_add_edit_group_flood_fieldset_end handler
 	 * Show admin group setting form for reputation
 	 * 
-	 * @param $group
+	 * @param int $group
 	 */
 	public function agr_add_edit_group_flood_fieldset_end($group)
 	{
@@ -248,8 +255,8 @@ class Reputation_Hook_Dispatcher extends Base {
 
 	/**
 	 * Hook agr_edit_end_qr_update_group handler
-	 * @param unknown_type $query
-	 * @param unknown_type $is_admin_group
+	 * @param array $query 
+	 * @param bool $is_admin_group
 	 */
 	public function agr_edit_end_qr_update_group(& $query, $is_admin_group)
 	{
@@ -317,6 +324,11 @@ class Reputation_Hook_Dispatcher extends Base {
 		echo  View::$instance->render();
 	}	
 	
+	/**
+	 * Hook pf_change_details_settings_validation handler
+	 * @param int $user user id
+	 * @param array $form form data array
+	 */
 	public function pf_change_details_settings_validation($user, & $form)
 	{
 		if (App::$forum_user['is_admmod'] && $user['id'] != App::$forum_user['id'])
@@ -329,6 +341,10 @@ class Reputation_Hook_Dispatcher extends Base {
 		}
 	}	
 
+	/**
+	 * Hook pf_change_details_about_pre_header_load handler
+	 * @param array $user user data
+	 */
 	public function pf_change_details_about_pre_header_load($user)
 	{
 		if ($user['rep_disable_adm'] == 1)
@@ -344,7 +360,11 @@ class Reputation_Hook_Dispatcher extends Base {
 			App::$forum_page['user_info']['reputation'] = '<li><span><a href="'.forum_link(App::$forum_url['reputation_view'], $user['id']).'">'.App::$lang['Reputation'].': <strong>[ + '.$user['rep_plus'].' | '. $user['rep_minus'].' - ]</strong></span></li></a> ';
 		}
 	}	
-	
+
+	/**
+	 * Hook pf_delete_user_form_submitted handler
+	 * @param int $id user id for delete reputation
+	 */
 	public function pf_delete_user_form_submitted($id)
 	{
 		$query = array(

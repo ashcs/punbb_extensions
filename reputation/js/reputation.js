@@ -75,8 +75,10 @@ $(function() {
 		return false;
 	}
 	
-	$(".rep_plus_minus a").click(function(e){e.stopPropagation();show(this)});
-	$('body').click(function(){hide();});
+	$(document).ready(function(){
+		$(".rep_plus_minus a").click(function(e){e.stopPropagation();show(this); return false});
+		$('body').click(function(){hide();});
+	});
 });
 
 

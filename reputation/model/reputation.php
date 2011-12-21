@@ -166,12 +166,11 @@ class Reputation_Model_Reputation
 	
 		$result = App::$forum_db->query_build($query) or error(__FILE__, __LINE__);
 			
-		if (FALSE === ($rep = App::$forum_db->fetch_assoc($result)))
+		if (FALSE == ($rep = App::$forum_db->fetch_assoc($result)))
 		{
 			$rep['plus'] = 0;
 			$rep['minus'] = 0;
 		}
-		
 		$query = array(
 			'UPDATE'	=> 'users',
 			'SET'		=> 'rep_plus='.$rep['plus'].',rep_minus='.$rep['minus'],

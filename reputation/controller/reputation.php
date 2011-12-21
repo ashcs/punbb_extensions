@@ -70,7 +70,19 @@ class Reputation_Controller_Reputation extends Controller
 				require FORUM_ROOT.'include/parser.php';
 			}			
 			App::paginate($count, App::$forum_user['disp_topics'], App::$forum_url['reputation_view'],array($this->uid));
-			$template = (App::$forum_user['g_id'] == FORUM_ADMIN) ? 'view_admin' : 'view_user';
+			
+			if (App::$forum_user['g_id'] == FORUM_ADMIN)
+			{
+				/*
+				 * Fix table layout described on: http://punbb.ru/post31786.html#p31786
+				 */
+				App::$forum_loader->add_css('#brd-reputation table{table-layout:inherit;}', array('type' => 'inline'));
+				$template = 'view_admin';
+			}
+			else
+			{
+				$template = 'view_user';
+			}
 			View::$instance->content = View::factory($this->view.$template, array ('records' => $this->reputation->get_info($this->uid, App::$forum_user['g_id'], App::$forum_page['start_from'], App::$forum_page['finish_at']))); 
 		}
 		else {
