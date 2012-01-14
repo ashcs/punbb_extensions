@@ -19,7 +19,7 @@
 <extension engine="1.0">
 	<id>developer_helper</id>
 	<title>Developer helper</title>
-	<version>1.0.0.13</version>
+	<version>1.0.0.14</version>
 	<description>Adds an more API function for developers to punBB</description>
 	<author>hcs</author>
 	<minversion>1.3</minversion>
@@ -79,7 +79,12 @@ if (App::$is_ajax)
 }
 		]]></hook>
 
-
+		<hook id="fn_get_current_url_start"><![CDATA[
+if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')
+{
+	return $GLOBALS['forum_user']['prev_url'];
+}
+		]]></hook>
 
 	</hooks>
 </extension>

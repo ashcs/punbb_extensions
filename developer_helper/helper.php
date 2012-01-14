@@ -26,8 +26,13 @@ class App {
 					
 	public static $admin_section = false, $profile_section = false, $is_ajax = false; 
 	
+	private static $loaded = false;
+	
     public static function init()
     {
+    	if (self::$loaded)
+    		return;
+    		
     	global $lang_common, $forum_db, $forum_user, $forum_page, $forum_config, $forum_hooks, $forum_url, $forum_flash, $forum_loader, $base_url;
     	self::$now = time();
         self::$forum_db = & $forum_db;
@@ -50,9 +55,15 @@ class App {
         {
         	self::$is_ajax = TRUE;
         }
+        spl_autoload_register(array('App','auto_load'));
+        self::$loaded = true;
     }	
     
-
+	public static function add_autoload_folder($folder)
+	{
+		self::$_autoload_folders .= '|'.$folder;
+	}
+    
     /**
      * Class name must be type Ext_name_Folder_Class_name
      * Or registered (entered in the array $autoloading)
@@ -311,4 +322,4 @@ class App {
 	
 App::init();	
 
-spl_autoload_register(array('App','auto_load'));
+
