@@ -2,22 +2,24 @@
 <!DOCTYPE extension SYSTEM "ext-1.0.dtd">
 
 	<!--
-		/** * Redirect links extension manifest for PunBB * *
-		@copyright Copyright (C) 2011 hcs, partially based on code copyright
-		(C) 2011 punbb.informer.com * @license
-		http://www.gnu.org/licenses/gpl.html GPL version 2 or higher *
-		@package hcs_redirect_links */
+		/** 
+		* Redirect links extension manifest  
+		* @copyright Copyright (C) 2012 hcs,
+		* for PunBB (C) 2011 punbb.informer.com 
+		* @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher 
+		* @package hcs_redirect_links 
+		*/
 	-->
 
 <extension engine="1.0">
 	<id>hcs_redirect_links</id>
-	<title>Редиректные ссылки</title>
-	<version>1.2.4</version>
-	<description>Расширение позволяет настраивать на форуме редирект для внешних ссылок. Перенаправляются ссылки оставленные пользователями в сообщениях и в подписях в профиле. Перенаправление призводится в новом окне, таким образом пользователь остается на сайте. В панели администратора доступна статистика по переходам.</description>
+	<title>Redirect links</title>
+	<version>1.2.7</version>
+	<description>Extension allows you to configure a redirect for external links. Redirected links in the messages and signatures in the profile. Forwarding is performed in a new window. In the admin panel available statistics on transitions.</description>
 	<author>hcs</author>
 
 	<minversion>1.4RC2</minversion>
-	<maxtestedon>1.4</maxtestedon>
+	<maxtestedon>1.4.2</maxtestedon>
 
 	<install><![CDATA[
 // Setup main table
@@ -102,19 +104,16 @@ if (FORUM_PAGE_SECTION == 'management') {
 }		
 		]]></hook>
 
-		<hook id="ps_start"><![CDATA[
-require $ext_info['path'].'/parser.php';
+		<hook id="ps_start, vt_start, pf_start"><![CDATA[
+require_once $ext_info['path'].'/parser.php';
 		]]></hook>
 
-		<hook id="ps_handle_url_tag_start"><![CDATA[
-$tmp_link = $link;
-		]]></hook>
 
 		<hook id="ps_handle_url_tag_end"><![CDATA[
 global $forum_user;
 if ($forum_user['is_guest'])
 { 
-	check_redirect(& $url, & $link, & $full_url, $tmp_link);
+	check_redirect($url, $link, $full_url);
 }
 		]]></hook>
 
@@ -153,7 +152,7 @@ if ($section == 'redirect')
 		]]></hook>
 
 		<hook id="vt_post_loop_start"><![CDATA[
-if ($cur_post['url'] != '' AND $forum_user['is_guest'])
+if ($cur_post['url'] != '' AND $forum_user['is_guest'] AND !is_reserved_url($cur_post['url']))
 	$cur_post['url'] = forum_link($forum_url['hcs_redirect_uid'], array(forum_hash($cur_post['url'], ''),$cur_post['poster_id']));
 		]]></hook>
 
@@ -163,19 +162,10 @@ if ($user['url'] != '')
 		]]></hook>
 
 		<hook id="pf_view_details_pre_header_load"><![CDATA[
-if (isset($forum_page['url']))
+if (isset($forum_page['url']) AND $forum_user['is_guest'] AND !is_reserved_url($forum_page['url']))
 {
-
-	if (!isset($lang_redirect_links))
-	{
-		if (file_exists($ext_info['path'].'/lang/'.$forum_user['language'].'.php'))
-			require_once $ext_info['path'].'/lang/'.$forum_user['language'].'.php';
-		else
-			require_once $ext_info['path'].'/lang/English.php';
-	}
-
 	$hash = forum_link($forum_url['hcs_redirect_uid'], array(forum_hash($user_url, ''),$user['id']));
-	$forum_page['url'] = '<a href="'.$hash.'" class="external url" rel="me">'.$lang_redirect_links['External link'].'</a>';
+	$forum_page['url'] = '<a href="'.$hash.'" class="external url" rel="me">'.str_replace('http://', '', $user_url).'</a>';
 	$forum_page['user_contact']['website'] = '<li><span>'.$lang_profile['Website'].': '.$forum_page['url'].'</span></li>';
 }
 		]]></hook>

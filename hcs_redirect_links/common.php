@@ -3,10 +3,10 @@
  * Make links redirectly
  *
  *	hcs_redirect_links
- * @copyright (C) 2011 hcs hcs@mail.ru
+ * @copyright (C) 2012 hcs hcs@mail.ru
  * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  *
- *	Extension for PunBB (C) 2008-2011 PunBB
+ *	Extension for PunBB (C) 2008-2012 PunBB
  * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
 

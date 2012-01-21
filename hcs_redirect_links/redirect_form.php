@@ -3,10 +3,10 @@
  * Make links redirectly
  *
  *	hcs_redirect_links
- * @copyright (C) 2011 hcs hcs@mail.ru
+ * @copyright (C) 2012 hcs hcs@mail.ru
  * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  *
- *	Extension for PunBB (C) 2008-2011 PunBB
+ *	Extension for PunBB (C) 2008-2012 PunBB
  * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
 
@@ -20,7 +20,7 @@ $forum_page['hidden_fields'] = array(
 	'pid'			=> '<input type="hidden" name="pid" value="'.$pid.'" />',
 	'uid'			=> '<input type="hidden" name="uid" value="'.$uid.'" />',
 	'profile_id'	=> '<input type="hidden" name="profile_id" value="'.$profile_id.'" />',
-	'hash'			=> '<input type="hidden" name="hash" value="'.$_GET['hash'].'" />',
+	'hash'			=> '<input type="hidden" name="hash" value="'.forum_htmlencode($_GET['hash']).'" />',
 );
 define('FORUM_ALLOW_INDEX', 0);
 $forum_head['robots'] = '<meta name="ROBOTS" content="NOINDEX, NOFOLLOW" />';
