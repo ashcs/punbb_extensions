@@ -14,9 +14,9 @@
 defined('FORUM') OR die();
 
 
-if (file_exists($ext_info['path'].'/lang/'.$forum_user['language'].'.php'))
+if (file_exists($ext_info['path'].'/lang/'.$GLOBALS['forum_user']['language'].'.php'))
 {
-	require_once $ext_info['path'].'/lang/'.$forum_user['language'].'.php';
+	require_once $ext_info['path'].'/lang/'.$GLOBALS['forum_user']['language'].'.php';
 }
 else
 {
