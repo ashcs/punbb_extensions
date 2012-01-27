@@ -16,7 +16,7 @@ class Reputation_Hook_Dispatcher extends Base {
 	public function front_end_init()
 	{
 		App::$forum_loader->add_css('.rep_plus_minus { font-style:italic; font-size: 90%; border-radius: 8px 8px; background-color:#F3F3F3; padding: 6px 12px !important;} .rep_plus_head { font-style:normal; color:#008000; } .rep_minus_head { font-style:normal; color:#FF0000; }', array('type' => 'inline'));
-		App::$forum_loader->add_css('extensions/reputation/css/style.css', array('type' => 'url'));
+		App::$forum_loader->add_css($GLOBALS['ext_info']['url'].'/css/style.css', array('type' => 'url'));
 		$GLOBALS['ext_jQuery_UI']->add_jQuery_UI_style(' .ui-widget {font-size: 0.8em;} .validateTips { border: 1px solid transparent; padding: 0.3em; }', 'ui_dailog_02'); // добавляем переопределение стиля в footer
 		
 		App::load_language('reputation.reputation');
