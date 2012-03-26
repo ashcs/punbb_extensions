@@ -122,7 +122,6 @@ var reputation = {
 				if (data.destination_url != undefined)
 				{
 					window.location = data.destination_url;
-					return;
 				}
 				window.location.reload(true);
 				return;

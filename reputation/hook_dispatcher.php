@@ -105,7 +105,7 @@ class Reputation_Hook_Dispatcher extends Base {
 		
 		$rep_js_env = '
     		PUNBB.env.rep_vars = {
-				"Reason" : "'.App::$lang['Form reason'].'",
+				"Reason" : "'.App::$lang['Form reason'].'"
 		    };';
 
 		App::$forum_loader->add_js($rep_js_env, array('type' => 'inline'));
