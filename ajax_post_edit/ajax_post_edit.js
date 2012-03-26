@@ -5,7 +5,7 @@ PUNBB.env.ape = {
 	id : -1, // currently edited post id
 	menu_hovered : false, // if menu is hovered
 	update_values : '',
-	url : '/extensions/ajax_post_edit/edit.php',	
+	url : PUNBB.env.base_url + 'extensions/ajax_post_edit/edit.php',	
 	
 	/*
 	 * Sends request for get post message

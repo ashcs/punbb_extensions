@@ -3,11 +3,11 @@
 <extension engine="1.0">
 	<id>ajax_post_edit</id>
 	<title>Ajax Post Edit</title>
-	<version>1.8.1</version>
+	<version>1.8.2</version>
 	<description>This extension allows quickly edit post</description>
 	<author>Daris. Adapted by hcs</author>
-	<minversion>1.4RC1</minversion>
-	<maxtestedon>1.4RC2</maxtestedon>
+	<minversion>1.4.2</minversion>
+	<maxtestedon>1.4.2</maxtestedon>
 
 	<dependencies>
 		<dependency>pun_jquery</dependency>
