@@ -140,6 +140,7 @@ class App {
 		$controller_name = $route['extension'].'_controller_'.$route['controller'];
 		
 		self::$controller_instance = new $controller_name (FORUM_ROOT.'extensions'.DIRECTORY_SEPARATOR.$route['extension'].DIRECTORY_SEPARATOR);
+		self::$controller_instance->self_url = App::$base_url.'/extensions/'.$route['extension'];
 		
 		// self::$controller_instance->attach ( Logger::get_instance(FORUM_CACHE_DIR.'controller_log.txt'));
 /*
@@ -287,7 +288,10 @@ class App {
 			$item['path'] = '';
 		if (!isset($item['url']))
 			$item['url'] = '';			
-
+/*
+ * TODO
+ * $hook_id can be is array
+ */
 		$forum_hooks[$hook_id][] = '$ext_info_stack[] = array(
 				\'id\'                => \''.$item['name'].'\',
 				\'path\'            => \''.$item['path'].'\',
