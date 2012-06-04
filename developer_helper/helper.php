@@ -1,11 +1,12 @@
 <?php
 
 class App {
-	
+
 	/*
 	 * Global forum vars
 	 */
-	public static	$lang_common, 
+	public static	$lang_common,
+					$lang_admin_common,
 					$forum_config,
 					$forum_db,
 					$forum_user,
@@ -33,7 +34,7 @@ class App {
     	if (self::$loaded)
     		return;
     		
-    	global $lang_common, $forum_db, $forum_user, $forum_page, $forum_config, $forum_hooks, $forum_url, $forum_flash, $forum_loader, $base_url;
+    	global $lang_common, $lang_admin_common, $forum_db, $forum_user, $forum_page, $forum_config, $forum_hooks, $forum_url, $forum_flash, $forum_loader, $base_url;
     	self::$now = time();
         self::$forum_db = & $forum_db;
         self::$forum_user = & $forum_user;
@@ -42,6 +43,7 @@ class App {
         self::$forum_hooks = & $forum_hooks;
         self::$forum_config = & $forum_config;
         self::$lang_common = & $lang_common;
+		self::$lang_admin_common = & $lang_admin_common;
         self::$forum_flash = & $forum_flash;
         self::$forum_loader = & $forum_loader;
         self::$base_url = & $base_url;
@@ -325,5 +327,4 @@ class App {
 }
 	
 App::init();	
-
 
