@@ -19,11 +19,11 @@
 <extension engine="1.0">
 	<id>developer_helper</id>
 	<title>Developer helper</title>
-	<version>1.0.0.20</version>
+	<version>1.0.0.25</version>
 	<description>Adds an more API function for developers to punBB</description>
 	<author>hcs</author>
 	<minversion>1.4.2</minversion>
-	<maxtestedon>1.4.2</maxtestedon>
+	<maxtestedon>1.4.3</maxtestedon>
 
 
 	<install><![CDATA[
@@ -33,6 +33,10 @@
 	]]></uninstall>
 
 	<hooks>
+
+		<hook id="aex_add_repository_for_developer_helper"><![CDATA[
+$inst_exts['developer_helper']['repo_url'] = $repository_url_by_extension[] = 'http://punbb.ru/repository'; 
+		]]></hook>	
 
 		<hook id="es_essentials"><![CDATA[
 require $ext_info['path'].DIRECTORY_SEPARATOR.'helper.php';
@@ -85,31 +89,42 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND $_SERVER['HTTP_X_REQUESTED_WITH
 	return $GLOBALS['forum_user']['prev_url'];
 }
 		]]></hook>
+		
+		
+		<hook id="fn_cookie_login_qr_update_online_user"><![CDATA[
+if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')
+{
+	$query['SET'] = str_replace(', prev_url=\''.$forum_db->escape($current_url).'\'', '', $query['SET']);
+}		
+		]]></hook>		
 
 		<hook id="fn_csrf_confirm_form_start"><![CDATA[
-if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' AND !defined(DEVELOPER_HELPER_CSRF_CONFIRM))
+if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' AND !defined('DEVELOPER_HELPER_CSRF_CONFIRM'))
 {		
+	foreach ($_POST as $submitted_key => $submitted_val)
+		if ($submitted_key != 'csrf_token' && $submitted_key != 'prev_url')
+		{
+			$hidden_fields = _csrf_confirm_form($submitted_key, $submitted_val);
+			foreach ($hidden_fields as $field_key => $field_val)
+				$forum_page['hidden_fields'][$field_key] = forum_htmlencode($field_val);
+		}
 
-
-//	foreach ($_POST as $submitted_key => $submitted_val)
-//		if ($submitted_key != 'csrf_token' && $submitted_key != 'prev_url')
-//		{
-//			$hidden_fields = _csrf_confirm_form($submitted_key, $submitted_val);
-//			foreach ($hidden_fields as $field_key => $field_val)
-//				$forum_page['hidden_fields'][$field_key] = '<input type="hidden" name="'.forum_htmlencode($field_key).'" value="'.forum_htmlencode($field_val).'" />';
-//		}
-		
-	App::send_json(array(
+	$send_data = array(
 		'code'		=>	-3, 
 		'message'	=>	$lang_common['CSRF token mismatch'],
 		'sender'	=>	'developer_helper',
 		'csrf_token'=>	generate_form_token(get_current_url()),	
 		'prev_url'	=>	forum_htmlencode($forum_user['prev_url']),
 		
-	));		
+	);
+	if (isset($forum_page['hidden_fields']))
+		$send_data['post_data'] = $forum_page['hidden_fields'];
+	
+	App::send_json($send_data);		
 	return 1;
 }		
 		]]></hook>
 		
+				
 	</hooks>
 </extension>

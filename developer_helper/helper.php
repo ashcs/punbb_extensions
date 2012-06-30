@@ -1,11 +1,14 @@
 <?php
+defined('DS') or define('DS', DIRECTORY_SEPARATOR );
+
 
 class App {
 	
 	/*
 	 * Global forum vars
 	 */
-	public static	$lang_common, 
+	public static	$lang_common,
+	                $lang_admin_common,
 					$forum_config,
 					$forum_db,
 					$forum_user,
@@ -33,7 +36,7 @@ class App {
     	if (self::$loaded)
     		return;
     		
-    	global $lang_common, $forum_db, $forum_user, $forum_page, $forum_config, $forum_hooks, $forum_url, $forum_flash, $forum_loader, $base_url;
+    	global $lang_common, $lang_admin_common, $forum_db, $forum_user, $forum_page, $forum_config, $forum_hooks, $forum_url, $forum_flash, $forum_loader, $base_url;
     	self::$now = time();
         self::$forum_db = & $forum_db;
         self::$forum_user = & $forum_user;
@@ -42,15 +45,16 @@ class App {
         self::$forum_hooks = & $forum_hooks;
         self::$forum_config = & $forum_config;
         self::$lang_common = & $lang_common;
+        self::$lang_admin_common = & $lang_admin_common;
         self::$forum_flash = & $forum_flash;
         self::$forum_loader = & $forum_loader;
         self::$base_url = & $base_url;
-        self::$autoloading['HTML'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'html.php';
-        self::$autoloading['View'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'view.php';
-        self::$autoloading['Controller'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'controller.php';
-        self::$autoloading['Upload'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'upload.php';
-        self::$autoloading['Base'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'base.php';
-        self::$autoloading['Registry'] = 'extensions'.DIRECTORY_SEPARATOR.'developer_helper'.DIRECTORY_SEPARATOR.'registry.php';
+        self::$autoloading['HTML'] = 'extensions'.DS.'developer_helper'.DS.'html.php';
+        self::$autoloading['View'] = 'extensions'.DS.'developer_helper'.DS.'view.php';
+        self::$autoloading['Controller'] = 'extensions'.DS.'developer_helper'.DS.'controller.php';
+        self::$autoloading['Upload'] = 'extensions'.DS.'developer_helper'.DS.'upload.php';
+        self::$autoloading['Base'] = 'extensions'.DS.'developer_helper'.DS.'base.php';
+        self::$autoloading['Registry'] = 'extensions'.DS.'developer_helper'.DS.'registry.php';
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')
         {
         	self::$is_ajax = TRUE;
@@ -139,7 +143,7 @@ class App {
             
 		$controller_name = $route['extension'].'_controller_'.$route['controller'];
 		
-		self::$controller_instance = new $controller_name (FORUM_ROOT.'extensions'.DIRECTORY_SEPARATOR.$route['extension'].DIRECTORY_SEPARATOR);
+		self::$controller_instance = new $controller_name (FORUM_ROOT.'extensions'.DS.$route['extension'].DS);
 		self::$controller_instance->self_url = App::$base_url.'/extensions/'.$route['extension'];
 		
 		// self::$controller_instance->attach ( Logger::get_instance(FORUM_CACHE_DIR.'controller_log.txt'));
@@ -190,7 +194,7 @@ class App {
 			
 		$params = explode('.',$namespace);
 		
-		$path = FORUM_ROOT.'extensions'.DIRECTORY_SEPARATOR.$params[0].DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.(isset($params[1]) ? self::$forum_user['language'].DIRECTORY_SEPARATOR.$params[1] : self::$forum_user['language']).'.php';
+		$path = FORUM_ROOT.'extensions'.DS.$params[0].DS.'lang'.DS.(isset($params[1]) ? self::$forum_user['language'].DS.$params[1] : self::$forum_user['language']).'.php';
 		
 		if (!file_exists($path))
 			$path = str_replace(self::$forum_user['language'],'English', $path);
@@ -318,7 +322,49 @@ class App {
 	
 	public static function send_json($params)
 	{
-		header('Content-type: text/html; charset=utf-8');
+		//header('Content-type: text/html; charset=utf-8');
+		header('Content-type: application/json; charset=utf-8');
+		if (!function_exists('json_encode'))
+		{
+			function json_encode($data)
+			{
+				switch ($type = gettype($data))
+				{
+				    case 'NULL':
+				    	return 'null';
+				    case 'boolean':
+				    	return ($data ? 'true' : 'false');
+				    case 'integer':
+				    case 'double':
+				    case 'float':
+				    	return $data;
+				    case 'string':
+				    	return '"' . addslashes($data) . '"';
+				    case 'object':
+				    	$data = get_object_vars($data);
+				    case 'array':
+				    	$output_index_count = 0;
+				    	$output_indexed = array();
+				    	$output_associative = array();
+				    	foreach ($data as $key => $value)
+				    	{
+				    		$output_indexed[] = json_encode($value);
+				    		$output_associative[] = json_encode($key) . ':' . json_encode($value);
+				    		if ($output_index_count !== NULL && $output_index_count++ !== $key)
+				    		{
+				    			$output_index_count = NULL;
+				    		}
+				    	}
+				    	if ($output_index_count !== NULL) {
+				    		return '[' . implode(',', $output_indexed) . ']';
+				    	} else {
+				    		return '{' . implode(',', $output_associative) . '}';
+				    	}
+				    default:
+				    	return ''; // Not supported
+				}
+			}
+		}		
 		echo json_encode($params);
 		die;
 	}

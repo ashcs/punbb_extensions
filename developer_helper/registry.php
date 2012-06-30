@@ -9,7 +9,7 @@ class Registry extends Base
 		parent::__construct();
 	}
 
-	static function instance()
+	static function get_instance()
 	{
 		if (!(isset(self::$instance)))
 		{
