@@ -3,7 +3,7 @@ defined('DS') or define('DS', DIRECTORY_SEPARATOR );
 
 
 class App {
-	
+
 	/*
 	 * Global forum vars
 	 */
@@ -371,5 +371,4 @@ class App {
 }
 	
 App::init();	
-
 
