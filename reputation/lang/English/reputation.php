@@ -3,8 +3,8 @@
  * Language definitions for reputation
  * 
  * @author hcs
- * @copyright (C) 2011 hcs reputation extension for PunBB (C)
- * @copyright Copyright (C) 2011 PunBB
+ * @copyright (C) 2012 hcs reputation extension for PunBB (C)
+ * @copyright Copyright (C) 2012 PunBB
  * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  * @package reputation
  */
@@ -56,25 +56,24 @@ return array(
 	'Max message help'		=> 'Max size of reputation message',
 	'Timeout'			=>	'Timeout',
 	'Timeout help'		=>	'Minimum time to change the reputation of the same user',
+	'Weight'			=>	'Weight of reputation',
+	'Weight help'		=>	'The value at which changes the reputation ',
 	'Reputation show full descr'	=>	'Show in post full reputation instead one number',
 	'Reputation show full'	=> 'Show in post',
-
-'Topic not readable' => '[subject to the closed section of]',
-'Message not readable' => '[view can not]',
-'Error reputation revote' => 'You can not re-change the reputation of one and the same message',
-
-'Comment' => 'Reply',
-'Comment header' => 'Reply',
-'Comment already' => 'Reply to comment to the reputation already on',
-'Comment other forbidden' => 'You can not reply to comments in someone  reputation',
-'Comment for' => 'response to changes in reputation',
-'Redirect info' => 'You will be redirected to a page listing',
-'No comment' => 'You must enter the answer',
-'Too long comment' => 'The answer is over the allowable size of %s characters',
-'Comment add redirect' => 'The answer is added.',
-'Message on topic'		=> 'Reply in topic %s',
-'Display settings'		=>	'Display settings',
-'Negative assessed'	=> '- ',
-'Positive assessed'	=> '+ ',
-	
+	'Topic not readable' => '[subject to the closed section of]',
+	'Message not readable' => '[view can not]',
+	'Error reputation revote' => 'You can not re-change the reputation of one and the same message',
+	'Comment' => 'Reply',
+	'Comment header' => 'Reply',
+	'Comment already' => 'Reply to comment to the reputation already on',
+	'Comment other forbidden' => 'You can not reply to comments in someone  reputation',
+	'Comment for' => 'response to changes in reputation',
+	'Redirect info' => 'You will be redirected to a page listing',
+	'No comment' => 'You must enter the answer',
+	'Too long comment' => 'The answer is over the allowable size of %s characters',
+	'Comment add redirect' => 'The answer is added.',
+	'Message on topic'		=> 'Reply in topic %s',
+	'Display settings'		=>	'Display settings',
+	'Negative assessed'	=> '- ',
+	'Positive assessed'	=> '+ ',
 );

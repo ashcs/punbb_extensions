@@ -16,42 +16,42 @@
 <extension engine="1.0">
 	<id>reputation</id>
 	<title>Reputation</title>
-	<version>4.2.3</version>
+	<version>4.3.0</version>
 	<description><![CDATA[Allow users to give reputation points to other users. Users necessarily specify the reason of change of reputation and can look who it changed. Admins can delete any reputation any users.]]></description>
 	<author>hcs</author>
-	<minversion>1.4RC1</minversion>
-	<maxtestedon>1.4.2</maxtestedon>
+	<minversion>1.4.2</minversion>
+	<maxtestedon>1.4.3</maxtestedon>
 
 	<dependencies>
-		<dependency>developer_helper</dependency>
+		<dependency minversion="1.0.0.25">developer_helper</dependency>
 		<dependency>pun_jquery</dependency>
 		<dependency>nya_jquery_ui</dependency>
 	</dependencies>
 
 	<install><![CDATA[
-define('REPUTATION_INSTALL', 1);
-require $ext_info['path'].'/install.php';	
-	]]></install>
+Reputation_Model_Installer::install();
+	]]></install>	
 
 	<uninstall><![CDATA[
-define('REPUTATION_UNINSTALL', 1);
-require $ext_info['path'].'/uninstall.php';
+Reputation_Model_Installer::uninstall();
 	]]></uninstall>
 
 	<hooks>
+	
+		<hook id="aex_add_repository_for_image_uploader"><![CDATA[
+$inst_exts['reputation']['repo_url'] = $repository_url_by_extension[] = 'http://punbb.ru/repository'; 
+		]]></hook>	
+			
 		<hook id="vt_start"><![CDATA[
-require $ext_info['path'].'/hook_dispatcher.php';
-Reputation_Hook_Dispatcher::front_end_init();
+Reputation_Module_Hook_Dispatcher::front_end_init();
 		]]></hook>
 
 		<hook id="agr_start, aop_start"><![CDATA[
-require $ext_info['path'].'/hook_dispatcher.php';
-Reputation_Hook_Dispatcher::back_end_init();
+Reputation_Module_Hook_Dispatcher::back_end_init();
 		]]></hook>
 
 		<hook id="pf_start"><![CDATA[
-require $ext_info['path'].'/hook_dispatcher.php';
-Reputation_Hook_Dispatcher::profile_init();
+Reputation_Module_Hook_Dispatcher::profile_init();
 		]]></hook>
 
 		<hook id="co_modify_url_scheme"><![CDATA[
@@ -64,5 +64,15 @@ else
 		<hook id="re_rewrite_rules"><![CDATA[
 require $ext_info['path'].'/url/rewrite_rule.php';
 		]]></hook>	
+		
+		<hook id="move_post_loop_insert_end"><![CDATA[
+$query = array(
+	'UPDATE' => 'reputation',
+	'SET' => 'post_id = '.$new_post_id,
+	'WHERE' => 'post_id = '.$cur_post['id'],
+);
+$forum_db->query_build($query); // or error(__FILE__, __LINE__);
+		]]></hook>	
+		
 	</hooks>
 </extension>

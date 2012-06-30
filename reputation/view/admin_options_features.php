@@ -21,10 +21,4 @@
 						<span class="fld-input"><input type="text" id="fld<?php echo App::$forum_page['fld_count'] ?>" name="form[reputation_maxmessage]" size="6" maxlength="6" value="<?php echo intval(App::$forum_config['o_reputation_maxmessage']) ?>" /></span>
 					</div>
 				</div>
-				<div class="sf-set set<?php echo ++App::$forum_page['item_count'] ?>">
-					<div class="sf-box text">
-						<label for="fld<?php echo ++App::$forum_page['fld_count'] ?>"><span><?php echo App::$lang['Timeout'] ?></span><small><?php echo App::$lang['Timeout help'] ?></small></label><br />
-						<span class="fld-input"><input type="text" id="fld<?php echo App::$forum_page['fld_count'] ?>" name="form[reputation_timeout]" size="6" maxlength="6" value="<?php echo App::$forum_config['o_reputation_timeout'] ?>" /></span>
-					</div>
-				</div>
 			</fieldset>

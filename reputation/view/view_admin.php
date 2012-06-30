@@ -48,7 +48,7 @@
 		echo App::$lang['Message not readable'];	
 ?>
 					</td>
-					<td style="text-align:center;"><?php echo $cur_rep['rep_plus']==1 ? '<img src="'.forum_link('extensions/reputation').'/img/warn_add.gif" alt="+" border="0">' : '<img src="'.forum_link('extensions/reputation').'/img/warn_minus.gif" alt="-" border="0">'; ?></td>
+					<td style="text-align:center;"><?php echo $cur_rep['rep_plus']>0 ? $cur_rep['rep_plus'].' <img src="'.forum_link('extensions/reputation').'/img/warn_add.gif" alt="+" border="0">' : $cur_rep['rep_minus'].' <img src="'.forum_link('extensions/reputation').'/img/warn_minus.gif" alt="-" border="0">'; ?></td>
 					<td><?php echo format_time($cur_rep['time']) ?></td>
 					<td style="text-align:center;"><input type="checkbox" name="delete_rep_id[]" value="<?php echo $cur_rep['id'] ?>"></td>						
 				</tr>

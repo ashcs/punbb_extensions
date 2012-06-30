@@ -3,8 +3,8 @@
  * Language definitions for reputation
  * 
  * @author hcs
- * @copyright (C) 2011 hcs reputation extension for PunBB (C)
- * @copyright Copyright (C) 20011 PunBB
+ * @copyright (C) 2012 hcs reputation extension for PunBB (C)
+ * @copyright Copyright (C) 2012 PunBB
  * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  * @package reputation
  */
@@ -56,14 +56,13 @@ return array(
 	'Max message help'	=>	'Максимальный размер сообщения репутации',
 	'Timeout'			=>	'Интервал',
 	'Timeout help'		=>	'Минимальное время, для изменения репутации одному и тому же пользователю',
+	'Weight'			=>	'Вес репутации',
+	'Weight help'		=>	'Значение, на которое изменяется репутация',
 	'Reputation show full descr'	=>	'Показывать в сообщении полную репутацию, вместо общего числа',
 	'Reputation show full'	=> 'Отображение в сообщениях',
-
-
 	'Topic not readable'	=>	'[тема в закрытом разделе]',
 	'Message not readable'	=>	'[просмотр невозможен]',
 	'Error reputation revote'	=>	'Нельзя повторно менять репутацию за одно и то же сообщение',
-
 	'Comment'			=>	'Ответить',
 	'Comment header'			=>	'Ответ',
 	'Comment already'	=>	'Ответ на комментарий к репутации уже оставлен',
@@ -73,8 +72,8 @@ return array(
 	'No comment'		=>	'Необходимо ввести ответ',
 	'Too long comment'	=>	'Ответ превышает допустимый размер %s символов',
 	'Comment add redirect'	=>	'Ответ добавлен.',
-'Message on topic'		=> 'Reply in topic %s',
-'Display settings'		=>	'Display settings',
+	'Message on topic'		=> 'Reply in topic %s',
+	'Display settings'		=>	'Display settings',
 	'Negative assessed'	=> '- ',
 	'Positive assessed'	=> '+ ',
 );

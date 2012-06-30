@@ -3,8 +3,8 @@
  * Reputation controller class
  * 
  * @author hcs
- * @copyright (C) 2011 hcs reputation extension for PunBB
- * @copyright Copyright (C) 2011 PunBB
+ * @copyright (C) 2012 hcs reputation extension for PunBB
+ * @copyright Copyright (C) 2012 PunBB
  * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  * @package reputation
  */
@@ -43,8 +43,9 @@ class Reputation_Controller_Reputation extends Controller
 		{
 			if (FALSE === ($user_rep = $this->reputation->get_by_id($this->id)))
 				message(App::$lang_common['Bad request']);
-				
-			global $smilies;
+
+			// Fix notice for fancy_video			
+			global $smilies, $forum_user, $ext_info;
 			if (!defined('FORUM_PARSER_LOADED'))
 			{
 				require FORUM_ROOT.'include/parser.php';
@@ -64,7 +65,8 @@ class Reputation_Controller_Reputation extends Controller
 		
 		if ($count > 0)
 		{
-			global $smilies;
+			// Fix notice for fancy_video
+			global $smilies, $forum_user, $ext_info;
 			if (!defined('FORUM_PARSER_LOADED'))
 			{
 				require FORUM_ROOT.'include/parser.php';
@@ -208,7 +210,7 @@ class Reputation_Controller_Reputation extends Controller
 		
 		if (empty($errors))
 		{
-			$this->reputation->add_voice($target, $message, App::$forum_user['id'], $method);
+			$this->reputation->add_voice($target, $message, App::$forum_user, $method);
 			return TRUE;
 		}
 		return FALSE;
@@ -257,14 +259,14 @@ class Reputation_Controller_Reputation extends Controller
 			message(App::$lang['Small Number of post']);
 		}
 
-		$time = App::$now - App::$forum_config['o_reputation_timeout']*60;	
+		$time = App::$now - App::$forum_user['g_rep_timeout']*60;	
 	
 		if (FALSE === ($target = $this->reputation->get_post_info($this->pid, $this->uid, App::$forum_user['id'], $time)))
 			message(App::$lang_common['Bad request']);
 			
 		if ($target['time'] AND $target['time'] > $time) 
 		{
-			message(sprintf(App::$lang['Timeout error'],$target['username'],floor(((($target['time'] + App::$forum_config['o_reputation_timeout'] * 60) - App::$now) / 60))));
+			message(sprintf(App::$lang['Timeout error'],$target['username'],floor(((($target['time'] + App::$forum_user['g_rep_timeout'] * 60) - App::$now) / 60))));
 		}
 
 		if ($target['post_id'] AND $this->pid == $target['post_id'])

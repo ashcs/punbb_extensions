@@ -20,3 +20,15 @@
 						<span class="fld-input"><input type="text" id="fld<?php echo App::$forum_page['fld_count'] ?>" name="rep_plus_min" size="5" maxlength="4" value="<?php echo $group['g_rep_plus_min'] ?>" /></span>
 					</div>
 				</div>	
+				<div class="sf-set set<?php echo ++App::$forum_page['item_count'] ?>">
+					<div class="sf-box text">
+						<label for="fld<?php echo ++App::$forum_page['fld_count'] ?>"><span><?php echo App::$lang['Timeout'] ?></span><small><?php echo App::$lang['Timeout help'] ?></small></label><br />
+						<span class="fld-input"><input type="text" id="fld<?php echo App::$forum_page['fld_count'] ?>" name="rep_timeout" size="6" maxlength="6" value="<?php echo $group['g_rep_timeout'] ?>" /></span>
+					</div>
+				</div>
+				<div class="sf-set set<?php echo ++App::$forum_page['item_count'] ?>">
+					<div class="sf-box text">
+						<label for="fld<?php echo ++App::$forum_page['fld_count'] ?>"><span><?php echo App::$lang['Weight'] ?></span><small><?php echo App::$lang['Weight help'] ?></small></label><br />
+						<span class="fld-input"><input type="text" id="fld<?php echo App::$forum_page['fld_count'] ?>" name="rep_weight" size="6" maxlength="6" value="<?php echo $group['g_rep_weight'] ?>" /></span>
+					</div>
+				</div>				

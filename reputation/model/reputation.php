@@ -120,18 +120,18 @@ class Reputation_Model_Reputation
 		return App::$forum_db->fetch_assoc($result);
 	}
 
-	public function add_voice($target, $message, $from_user_id, $method)
+	public function add_voice($target, $message, $user, $method)
 	{
 		$query = array(
 			'INSERT'	=> 'user_id, from_user_id, time, post_id, reason, topic_id, rep_'. $method,
 			'INTO'		=> 'reputation',
-			'VALUES'		=> '\''.$target['poster_id'].'\', '.$from_user_id.', '.mktime().', '.$target['id'].', \''.App::$forum_db->escape($message).'\', '.$target['topic_id'].', 1',
+			'VALUES'		=> '\''.$target['poster_id'].'\', '.$user['id'].', '.mktime().', '.$target['id'].', \''.App::$forum_db->escape($message).'\', '.$target['topic_id'].', '.$user['g_rep_weight'],
 		);	
 		$result = App::$forum_db->query_build($query) or error(__FILE__, __LINE__);		
 
 		$query = array(
 			'UPDATE'	=> 'users',
-			'SET'		=> 'rep_'. $method.'='.'rep_'. $method.'+1',
+			'SET'		=> 'rep_'. $method.'='.'rep_'. $method.'+'.$user['g_rep_weight'],
 			'WHERE'		=> 'id='.$target['poster_id']
 		);
 		App::$forum_db->query_build($query) or error(__FILE__, __LINE__);			
