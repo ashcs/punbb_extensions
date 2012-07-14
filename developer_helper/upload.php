@@ -42,7 +42,7 @@ class Upload {
 	public $xss_clean				= FALSE;
 	public $temp_prefix				= "temp_file_";
 	public $client_name				= '';
-
+	protected $_xss_hash			= '';
 	protected $_file_name_override	= '';
 
 	/* never allowed, string replacement */
@@ -1403,7 +1403,21 @@ class Upload {
 		return $str;
 	}
 
-
+	/**
+	 * Random Hash for protecting URLs
+	 *
+	 * @return	string
+	 */
+	protected function xss_hash()
+	{
+		if ($this->_xss_hash == '')
+		{
+			mt_srand();
+			$this->_xss_hash = md5(time() + mt_rand(0, 1999999999));
+		}
+	
+		return $this->_xss_hash;
+	}
 
 	/**
 	 * Compact Exploded Words
