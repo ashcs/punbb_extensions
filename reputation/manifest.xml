@@ -19,7 +19,7 @@
 	<version>4.3.0</version>
 	<description><![CDATA[Allow users to give reputation points to other users. Users necessarily specify the reason of change of reputation and can look who it changed. Admins can delete any reputation any users.]]></description>
 	<author>hcs</author>
-	<minversion>1.4.2</minversion>
+	<minversion>1.4.3</minversion>
 	<maxtestedon>1.4.3</maxtestedon>
 
 	<dependencies>
