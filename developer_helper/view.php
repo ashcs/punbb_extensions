@@ -14,7 +14,7 @@ class Kohana_View {
 
 	// Array of global variables
 	protected static $_global_data = array();
-
+	
 	/**
 	 * Returns a new View object. If you do not define the "file" parameter,
 	 * you must call [View::set_filename].
@@ -341,4 +341,5 @@ class Kohana_View {
 class View extends Kohana_View 
 {
 	public static $instance;
+	public static $forum_override = FALSE;
 }

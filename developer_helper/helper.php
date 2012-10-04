@@ -1,5 +1,5 @@
 <?php
-defined('DS') or define('DS', DIRECTORY_SEPARATOR );
+defined('DS') or define('DS', '/' );
 
 
 class App {
@@ -105,19 +105,24 @@ class App {
 	}	
 
 	
-	public static function route()
+	public static function route($override_path = null)
 	{
-		if (!isset($_GET['r']))
+		
+		if ($override_path == null AND !isset($_GET['r']))
 			return false;
 			
-		$params = explode('/',preg_replace('/[^a-zA-Z0-9\-_\/]/','',$_GET['r']));
+		if ($override_path == null) {
+			$override_path = $_GET['r'];
+		}
+			
+		$params = explode('/',preg_replace('/[^a-zA-Z0-9\-_\/]/','',$override_path));
 		foreach ($params as $key => $cur_param)
 		{
 			if (forum_trim($cur_param) == '')
 				message(App::$lang_common['Bad request']);
 				//unset ($params[$key]);
 		}
-		unset($_GET['r']);
+		//unset($_GET['r']);
 		
         $route['extension'] = array_shift($params);
         $route['controller'] = 'default';
@@ -174,13 +179,21 @@ class App {
 				
 		if (View::$instance)
 		{
-			require FORUM_ROOT.'header.php';
-			ob_start();
-			echo  View::$instance->render();
-			$tpl_temp = forum_trim(ob_get_contents());
-			$tpl_main = str_replace('<!-- forum_main -->', $tpl_temp, $tpl_main);
-			ob_end_clean();
-			require FORUM_ROOT.'footer.php';
+			if (View::$forum_override)
+			{
+				echo  View::$instance->render();
+			}
+			else 
+			{
+				require FORUM_ROOT.'header.php';
+				ob_start();
+				echo  View::$instance->render();
+				$tpl_temp = forum_trim(ob_get_contents());
+				$tpl_main = str_replace('<!-- forum_main -->', $tpl_temp, $tpl_main);
+				ob_end_clean();
+				require FORUM_ROOT.'footer.php';
+				
+			}
 		}
 		die();		
 		
