@@ -309,7 +309,7 @@ class App {
  * TODO
  * $hook_id can be is array
  */
-		$forum_hooks[$hook_id][] = '$ext_info_stack[] = array(
+		$hook = '$ext_info_stack[] = array(
 				\'id\'                => \''.$item['name'].'\',
 				\'path\'            => \''.$item['path'].'\',
 				\'url\'            => \''.$item['url'].'\',
@@ -321,6 +321,10 @@ class App {
 
 			array_pop($ext_info_stack);
 			$ext_info = empty($ext_info_stack) ? array() : $ext_info_stack[count($ext_info_stack) - 1];';
+		if (isset($forum_hooks[$hook_id]) && !isset($item['priority']))
+            array_unshift($forum_hooks[$hook_id],$hook);
+		else
+		    $forum_hooks[$hook_id][] = $hook;
 	}
 	
 	public static function paginate($total_count, $disp_count, $url, $params = null)

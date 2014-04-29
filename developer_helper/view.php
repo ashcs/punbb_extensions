@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Acts as an object wrapper for HTML pages with embedded PHP, called "views".
  * Variables can be assigned with the view object and referenced locally within
@@ -14,7 +14,7 @@ class Kohana_View {
 
 	// Array of global variables
 	protected static $_global_data = array();
-	
+
 	/**
 	 * Returns a new View object. If you do not define the "file" parameter,
 	 * you must call [View::set_filename].
@@ -49,7 +49,7 @@ class Kohana_View {
 		if (View::$_global_data)
 		{
 			// Import the global view variables to local namespace and maintain references
-			extract(View::$_global_data, EXTR_REFS);
+			extract(View::$_global_data, EXTR_SKIP | EXTR_REFS);
 		}
 
 		// Capture the view output
@@ -158,20 +158,22 @@ class Kohana_View {
 	 */
 	public function & __get($key)
 	{
-		if (isset($this->_data[$key]))
+		if (array_key_exists($key, $this->_data))
 		{
 			return $this->_data[$key];
 		}
-		elseif (isset(View::$_global_data[$key]))
+		elseif (array_key_exists($key, View::$_global_data))
 		{
 			return View::$_global_data[$key];
 		}
 		else
+
 		{
 //			throw new Kohana_Exception('View variable is not set: :var',
 //				array(':var' => $key));
 			message ('View variable is not set: '.$key);
 		}
+
 	}
 
 	/**
@@ -252,7 +254,7 @@ class Kohana_View {
 		$this->_file = $file.'.php';
 		return $this;
 	}
-	
+
 	/**
 	 * Assigns a variable by name. Assigned values will be available as a
 	 * variable within the view file:
@@ -338,7 +340,7 @@ class Kohana_View {
 
 } // End View
 
-class View extends Kohana_View 
+class View extends Kohana_View
 {
 	public static $instance;
 	public static $forum_override = FALSE;
