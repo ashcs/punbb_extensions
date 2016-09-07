@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE extension SYSTEM "ext-1.0.dtd">
+
+<!--
+/**
+ * 
+ * Show avatars on forum list
+ * @copyright (C) 2015 hcs hcs@mail.ru
+ * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+ *
+ * Extension for PunBB (C) 2008-2015 PunBB
+ * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+ */
+-->
+
+<extension engine="1.0">
+	<id>hcs_avatars_on_index</id>
+	<title>Show avatars on forum list</title>
+	<version>1.0.6</version>
+	<description>This extension showing the avatars on forum index and viewforum pages </description>
+	<author>hcs</author>
+	<minversion>1.4.2</minversion>
+	<maxtestedon>1.4.4</maxtestedon>
+
+   
+	<hooks>
+
+        <hook id="in_qr_get_cats_and_forums"><![CDATA[
+$query['SELECT'] .= ', u2.id AS poster_id, u2.avatar, u2.avatar_width, u2.avatar_height';
+$query['JOINS'][] = array(
+    'LEFT JOIN' => 'posts AS p2',
+    'ON'            => '(p2.id = f.last_post_id)'
+);
+
+$query['JOINS'][] = array(
+    'LEFT JOIN' => 'users AS u2',
+    'ON'            => '(u2.id = p2.poster_id)'
+);
+        ]]></hook>   
+
+        <hook id="in_normal_row_pre_display" priority="10"><![CDATA[
+if ($cur_forum['last_post'] != '') { 
+    $avatar = '<img src="'. get_avatar(array('id' => $cur_forum['poster_id'], 'avatar' => $cur_forum['avatar'] )) .'" width="30px" class="list-avatar" />';
+    $forum_page['item_body']['info']['lastpost'] = str_replace('<span class="label">'.$lang_index['Last post'].'</span>', '<div class="ul-lastpost"><span class="ulabel">'.$avatar.'</span></div>', $forum_page['item_body']['info']['lastpost']);
+}
+        ]]></hook>   
+
+        <hook id="vf_row_pre_item_subject_merge"><![CDATA[
+if ($cur_topic['moved_to'] == null) {
+    $avatar = '<img src="'. get_avatar(array('id' => $cur_topic['poster_id'], 'avatar' => $cur_topic['avatar'] )) .'" width="30px" class="list-avatar" />';
+    $forum_page['item_body']['info']['lastpost'] =  str_replace('<span class="label">'.$lang_forum['Last post'].'</span>', '<div class="ul-lastpost"><span class="ulabel">'.$avatar.'</span></div>', $forum_page['item_body']['info']['lastpost']);
+}
+        ]]></hook>   
+
+        <hook id="vf_qr_get_topics"><![CDATA[
+$query['SELECT'] .= ', u2.id AS poster_id, u2.avatar, u2.avatar_width, u2.avatar_height, t.last_post_id';
+
+$query['JOINS'][] = array(
+    'LEFT JOIN' => 'posts AS p2',
+    'ON'            => '(p2.id = t.last_post_id)'
+);
+
+$query['JOINS'][] = array(
+    'LEFT JOIN' => 'users AS u2',
+    'ON'            => '(u2.id = p2.poster_id)'
+);
+        ]]></hook>   
+
+        <hook id="es_essentials"><![CDATA[
+function get_avatar($user) {
+        global $base_url, $forum_config, $ext_info;
+        switch ($user['avatar'])
+        {
+            case FORUM_AVATAR_GIF:
+                $avatar_filename = $user['id'].'.gif';
+                break;
+    
+            case FORUM_AVATAR_JPG:
+                $avatar_filename = $user['id'].'.jpg';
+                break;
+    
+            case FORUM_AVATAR_PNG:
+                $avatar_filename = $user['id'].'.png';
+                break;
+        }
+    
+        if (!isset($avatar_filename)) {
+            return  $ext_info['url'].'/css/default.png';
+        }
+    
+       return $base_url .'/'. $forum_config['o_avatars_dir'] .'/'.$avatar_filename;
+}
+        ]]></hook>
+
+        <hook id="hd_head"><![CDATA[
+if (FORUM_ROOT != '../') {
+    $forum_config['o_show_dot'] = 0;
+    if (file_exists($ext_info['path'].'/css/'.$forum_user['style'].'.css')) {
+        $forum_loader->add_css( $ext_info['url'].'/css/'.$forum_user['style'].'.css', array('type' => 'url'));
+    }
+    else {
+        $forum_loader->add_css( $ext_info['url'].'/css/Oxygen.css', array('type' => 'url'));
+    }
+}        
+        ]]></hook>
+         
+	</hooks>
+</extension>

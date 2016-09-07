@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE extension SYSTEM "ext-1.0.dtd">
+
+<!--
+/**
+ * Ulogin implemenation
+ *
+ * @copyright (C) 2016 hcs hcs@mail.ru
+ * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+ *
+ * Extension for PunBB (C) 2008-2016 PunBB
+ * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+ */
+-->
+
+<extension engine="1.0">
+	<id>ulogin</id>
+	<title>Ulogin</title>
+	<version>1.0.1</version>
+	<description>This extension allows you to login from socials network </description>
+	<author>hcs</author>
+	<minversion>1.4.4</minversion>
+	<maxtestedon>1.4.4</maxtestedon>
+
+	<dependencies>
+		<dependency>composer</dependency>
+	</dependencies>
+	
+	<install><![CDATA[
+Ulogin\Installer::install();
+	]]></install>
+
+	<uninstall><![CDATA[
+Ulogin\Installer::uninstall();
+	]]></uninstall>
+
+	<hooks>
+	
+		<hook id="hd_visit_elements" priority="1"><![CDATA[
+Ulogin\Hooks::hd_visit_elements($visit_elements);		
+		]]></hook>	
+        <hook id="rg_start"  priority="10"><![CDATA[
+Ulogin\Hooks::rg_start();       
+        ]]></hook>      
+		<hook id="rg_register_output_start"><![CDATA[
+Ulogin\Hooks::rg_register_output_start();       
+        ]]></hook>  	
+        <hook id="exchange_register_pre_group"><![CDATA[
+Ulogin\Hooks::exchange_register_pre_group();       
+        ]]></hook>      
+        <hook id="rg_register_pre_login_redirect"><![CDATA[
+Ulogin\Hooks::rg_register_pre_login_redirect($new_uid);       
+        ]]></hook>
+        <hook id="fn_delete_user_end"><![CDATA[
+Ulogin\Hooks::fn_delete_user_end($user_id);
+        ]]></hook>   
+        <hook id="li_login_output_start"><![CDATA[
+Ulogin\Hooks::li_login_output_start();        
+        ]]></hook>
+        <hook id="li_login_pre_redirect"><![CDATA[
+Ulogin\Hooks::li_login_pre_redirect();        
+        ]]></hook>
+        <hook id="aop_features_gzip_fieldset_end"><![CDATA[
+Ulogin\Hooks::aop_features_gzip_fieldset_end();
+        ]]></hook>       
+        <hook id="aop_features_validation"><![CDATA[
+if (!isset($form['ulogin_force_reg']) || $form['ulogin_force_reg'] != '1') $form['ulogin_force_reg'] = '0';
+        ]]></hook>        
+	</hooks>
+</extension>

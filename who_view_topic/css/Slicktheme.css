@@ -1,0 +1,88 @@
+#forum_who_now_at_forum {
+	margin-bottom: 15px; 
+	padding-left:15px;
+	padding-right: 15px;
+}
+
+.rights_container {
+	margin-top: 15px;	
+}
+
+.who_now_container {
+    margin-top: 15px;
+}
+
+#forum_who_now_at_forum .main-head {
+    text-indent: inherit;
+    position: relative;
+    line-height: inherit;
+    visibility: visible;	
+}
+
+#forum_who_now_at_forum  strong {
+    font-weight: normal;
+}
+
+.who_now_container, .rights_container  {
+	background-color: #efefef;
+	border-radius: 3px;
+}
+
+.who_now_container  .main-head, .rights_container .main-head{
+    background-color: #efefef;
+	border:none;
+	color: #555;
+	padding-left: 0;
+}
+
+.who_now_container  .main-head  .hn, .rights_container .main-head .hn{
+    text-transform: uppercase;
+    font-weight: 700;
+	font-size: 1.3rem !important;
+	margin: 10px 0 0 0;
+	padding-left: 1.417em;
+}
+
+.who_now_container  .main-head  .hn:before, .rights_container .main-head .hn:before, 
+#forum_who_now_at_forum li.who_access_1:before, #forum_who_now_at_forum li.who_access_0:before {
+    font-family: MaterialDesignIcons;
+    color: inherit;
+    display: inline-block;
+    margin-right: .5em;
+    font: normal normal normal 14px/1 MaterialDesignIcons;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.who_now_container  .main-head  .hn:before {
+    content:"\f1e7";
+}
+
+.rights_container .main-head .hn:before {
+    content:"\f008";
+}
+
+.who_now_container  .main-content, .rights_container .main-content {
+    padding: 3px 1.417em;
+	font-size: 1.3rem
+}
+
+#forum_who_now_at_forum li {
+	list-style-type: none;
+}
+
+#forum_who_now_at_forum li.who_access_1:before {
+	content:"\f5e0";
+	color: #599877;
+}
+
+#forum_who_now_at_forum li.who_access_0:before {
+    content:"\f159";
+    color: #cf6363;
+}
+
+#forum_who_now_at_forum ul {
+	padding-left: 0;
+}

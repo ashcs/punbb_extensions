@@ -1,0 +1,8 @@
+{
+  "name" : "ulogin punbb",
+  "autoload" : {
+    "psr-4" : {
+        "Ulogin\\": "../ulogin/src/"
+    }
+  }
+}

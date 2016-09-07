@@ -1,0 +1,29 @@
+.info-lastpost cite, .info-lastpost strong {
+	margin-left: 50px;
+	word-wrap: break-word;
+	text-align: left;
+}
+#brd-searchtopics .info-lastpost cite, #brd-searchtopics .info-lastpost strong  {
+	margin-left: inherit !important;
+}
+.ul-lastpost {
+	float: left !important;
+	width: 50px !important;
+	margin-right: -50px !important;
+}
+#brd-index .main-content .main-item ul.item-info,
+#brd-viewforum .main-content .main-item ul.item-info { 
+	margin-left: -38em !important;
+}
+.main-item .item-subject {
+	width: 84% !important;
+}
+li.info-lastpost strong {
+	display: block;
+}
+.ulabel img {
+	border: 1px solid #d5d5d5;
+	box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+	padding: 1px;
+	margin-top: 3px;
+}

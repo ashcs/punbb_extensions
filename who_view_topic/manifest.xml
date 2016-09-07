@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE extension SYSTEM "ext-1.0.dtd">
+
+
+<extension engine="1.0">
+    <id>who_view_topic</id>
+    <title>Who view the topic</title>
+    <version>1.0.0</version>
+    <description>Who view the topic in Forum PunBB</description>
+    <author>PunBB.Ru</author>
+
+    <minversion>1.4.4</minversion>
+    <maxtestedon>1.4.4</maxtestedon>
+
+    <install><![CDATA[
+$forum_db->add_field('online', 'last_tid', 'INT(10)', false, 0);
+$forum_db->add_field('online', 'last_fid', 'INT(10)', false, 0);
+    ]]></install>
+
+    <uninstall><![CDATA[
+$forum_db->drop_field('online', 'last_tid');    
+$forum_db->drop_field('online', 'last_fid');
+    ]]></uninstall>
+
+
+    <hooks>
+
+        <hook id="fn_cookie_login_qr_update_online_user, fn_set_default_user_qr_update_online_guest_user"><![CDATA[
+if (strpos($_SERVER['PHP_SELF'], 'viewtopic') !== FALSE) {
+    $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+    $query['SET'] .= ', last_tid='.$id.', last_fid=0';
+}        
+else if (strpos($_SERVER['PHP_SELF'], 'viewforum') !== FALSE){
+    $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+    $query['SET'] .= ', last_fid='.$id.', last_tid=0';
+}
+else {
+    $query['SET'] .= ', last_tid=0, last_fid=0';
+}
+        ]]></hook>
+
+        <hook id="vt_start,vf_start"><![CDATA[
+if (file_exists($ext_info['path'].'/css/'.$forum_user['style'].'.css')) {
+    $forum_loader->add_css( $ext_info['url'].'/css/'.$forum_user['style'].'.css', array('type' => 'url'));
+}
+else {
+    $forum_loader->add_css( $ext_info['url'].'/css/Oxygen.css', array('type' => 'url'));
+} 
+        ]]></hook>
+        
+
+        <hook id="hd_main_elements"><![CDATA[
+if (defined('FORUM_PAGE')) {
+    if (FORUM_PAGE == 'viewtopic' || FORUM_PAGE == 'viewforum')
+    {
+        $column = (FORUM_PAGE == 'viewtopic') ? 'last_tid' : 'last_fid';
+    
+        $tpl_main = str_replace('<!-- forum_crumbs_end -->', '<!-- forum_who_now_at_forum -->'."\n".'<!-- forum_crumbs_end -->', $tpl_main);
+
+        if (file_exists($ext_info['path'].'/lang/'.$forum_user['language'].'.php')) {
+            include $ext_info['path'].'/lang/'.$forum_user['language'].'.php';
+        } else {
+            include $ext_info['path'].'/lang/English.php';
+        }
+
+        $query = array(
+            'SELECT'    => 'o.user_id, o.ident',
+            'FROM'      => 'online AS o',
+            'WHERE'     => 'o.idle=0 AND o.' . $column . '='.$id
+        );
+
+        $result = $forum_db->query_build($query) or error(__FILE__, __LINE__);
+        $forum_page['num_guests'] = $forum_page['num_users'] = 0;
+        $users = array();
+
+        while ($forum_user_online = $forum_db->fetch_assoc($result))
+        {
+            if ($forum_user_online['user_id'] > 1)
+            {
+                $users[] = ($forum_user['g_view_users'] == '1') ? '<a href="'.forum_link($forum_url['user'], $forum_user_online['user_id']).'">'.forum_htmlencode($forum_user_online['ident']).'</a>' : forum_htmlencode($forum_user_online['ident']);
+                ++$forum_page['num_users'];
+            }
+            else
+            {
+                ++$forum_page['num_guests'];
+            }
+        }
+
+        $forum_page['online_info'] = array();
+        $forum_page['online_info']['guests'] = ($forum_page['num_guests'] == 0) ? $lang_index['Guests none'] : sprintf((($forum_page['num_guests'] == 1) ? $lang_index['Guests single'] : $lang_index['Guests plural']), forum_number_format($forum_page['num_guests']));
+        $forum_page['online_info']['users'] = ($forum_page['num_users'] == 0) ? $lang_index['Users none'] : sprintf((($forum_page['num_users'] == 1) ? $lang_index['Users single'] : $lang_index['Users plural']), forum_number_format($forum_page['num_users']));
+    
+        if (FORUM_PAGE == 'viewforum') {
+            foreach ($forum_user as $key => $value) {
+                if (strpos($key, 'g_') !== FALSE) {
+                    if (array_key_exists('Who '.$key, $lang_index)) {
+                        $rights_list[] = '<li class="who_access_'.$value.'">'.sprintf($lang_index['Who '.$key], $lang_index['who_access_'.$value]).'</li>';
+                    }
+                }
+            }
+            
+            $rights = '<div class="col-md-6"><div class="rights_container" ><div class="main-head"><h2 class="hn"><span>'. $lang_index['Who right access'] .'</span></h2></div><div class="main-content"><ul>'.implode("\n",$rights_list).'</ul></div></div></div>';
+            $col = 'col-md-6';
+        }
+        else {
+            $rights = '';
+            $col = 'col-md-12';
+        }
+        $main_elements['<!-- forum_who_now_at_forum -->'] = '<div id="forum_who_now_at_forum" class="row"><div class="'.$col.'"><div class="who_now_container"><div class="main-head"><h2 class="hn"><span>'. $lang_index['Who now at forum'] .'</span></h2></div><div class="main-content"><h3 class="hn"><span>'. sprintf($lang_index['Currently online'], implode($lang_index['Online stats separator'], $forum_page['online_info'])).'</span>'. (!empty($users)? '    —  <span>'. implode($lang_index['Online list separator'], $users).'</span>': '').'</h3></div></div></div>'.$rights.'</div>'; 
+    }
+}        
+        ]]></hook>
+
+
+    </hooks>
+</extension>

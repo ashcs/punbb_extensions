@@ -1,0 +1,10 @@
+table#recaptcha_table {
+	table-layout:inherit;
+	margin:auto;
+}
+table#recaptcha_table #recaptcha_response_field {
+	left:0;
+}
+.sf-set.recaptcha{
+	height:150px;
+}

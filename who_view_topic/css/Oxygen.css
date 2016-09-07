@@ -1,0 +1,41 @@
+#forum_who_now_at_forum {
+    margin-bottom: 15px; 
+}
+
+.rights_container {
+    margin-top: 15px;   
+}
+
+.who_now_container {
+    margin-top: 15px;
+}
+
+#forum_who_now_at_forum .main-head {
+    text-indent: inherit;
+    position: relative;
+    line-height: inherit;
+    visibility: visible;    
+}
+
+#forum_who_now_at_forum  strong {
+    font-weight: normal;
+}
+
+.who_now_container, .rights_container  {
+    background-color: #efefef;
+    border-radius: 3px;
+}
+
+#forum_who_now_at_forum .main-content {
+	padding: 8px 1.417em;
+}
+.who_now_container  .main-head, .rights_container .main-head{
+    background-color: #efefef;
+    border:none;
+    padding-left: 0;
+}
+
+.who_now_container  .main-head  .hn, .rights_container .main-head .hn{
+    margin: 10px 0 0 0;
+    padding-left: 1.417em;
+}
