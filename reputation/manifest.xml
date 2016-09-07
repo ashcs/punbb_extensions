@@ -23,9 +23,9 @@
 	<maxtestedon>1.4.3</maxtestedon>
 
 	<dependencies>
-		<dependency minversion="1.0.0.25">developer_helper</dependency>
+		<dependency>developer_helper</dependency>
 		<dependency>pun_jquery</dependency>
-		<dependency minversion="0.4.0">nya_jquery_ui</dependency>
+		<dependency>nya_jquery_ui</dependency>
 	</dependencies>
 
 	<install><![CDATA[
