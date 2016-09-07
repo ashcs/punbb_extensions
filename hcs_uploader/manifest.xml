@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE extension SYSTEM "ext-1.0.dtd">
+
+<!--
+/**
+ *
+ * Uploader
+ * @copyright (C) 2016 hcs hcs@mail.ru
+ * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+ *
+ * Extension for PunBB (C) 2008-2016 PunBB
+ * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+ */
+-->
+
+<extension engine="1.0">
+	<id>hcs_uploader</id>
+	<title>Uploader</title>
+	<version>1.0.8</version>
+	<description><![CDATA[This extension allows you to upload files with ajax drag&drop form]]></description>
+	<author>hcs, MrX</author>
+	<minversion>1.4.4</minversion>
+	<maxtestedon>1.4.4</maxtestedon>
+
+	<dependencies>
+		<dependency>developer_helper</dependency>
+		<dependency>pun_jquery</dependency>
+	</dependencies>
+	
+	<install><![CDATA[
+Hcs_uploader_Model_Installer::install();
+	]]></install>
+
+	<uninstall><![CDATA[
+Hcs_uploader_Model_Installer::uninstall();
+	]]></uninstall>
+
+	<hooks>
+		<hook id="co_modify_url_scheme"><![CDATA[
+if (file_exists($ext_info['path'].'/url/'.$forum_config['o_sef'].'.php'))
+    require $ext_info['path'].'/url/'.$forum_config['o_sef'].'.php';
+else
+    require $ext_info['path'].'/url/Default.php';		
+		]]></hook>
+
+        <hook id="re_rewrite_rules"><![CDATA[
+require $ext_info['path'].'/url/rewrite_rule.php';
+        ]]></hook>
+        
+	    <hook id="ca_new_function"><![CDATA[
+App::load_language('hcs_uploader');
+App::add_admin_menu(array('name'=>'uploader','section'=>'uploader', 'href'=>'<a href="'.forum_link($forum_url['uploader_admin']).'">'.App::$lang['Uploader'].'</a>'));        
+	    ]]></hook>        
+
+		<hook id="po_pre_header_load,vt_quickpost_pre_display"><![CDATA[
+$forum_page['form_attributes']['enctype'] = 'enctype="multipart/form-data"';
+		]]></hook>
+
+		<hook id="hd_head"><![CDATA[
+Hcs_uploader_Model_Hooks::hd_head();        
+		]]></hook>
+
+        <hook id="po_start,ed_start,vt_start"><![CDATA[
+App::load_language('hcs_uploader');
+        ]]></hook>
+
+		<hook id="po_end_validation"><![CDATA[
+Hcs_uploader_Model_Uploader::files_upload();
+		]]></hook>
+
+		<hook id="po_pre_redirect"><![CDATA[
+Hcs_uploader_Model_Uploader::set_resource_id('post', $new_pid);
+		]]></hook>
+		
+		<hook id="ed_pre_redirect"><![CDATA[
+Hcs_uploader_Model_Uploader::set_resource_id('post', $id);
+        ]]></hook>
+        
+		<hook id="vt_row_pre_display"><![CDATA[
+if (!isset($forum_page['message']['signature'])) { 
+    $forum_page['message']['signature'] = '';
+}
+$forum_page['message']['signature'] = Hcs_uploader_Model_Uploader::show_files('post', $cur_post['id']).$forum_page['message']['signature'];
+		]]></hook>
+
+		<hook id="fn_delete_post_qr_delete_post"><![CDATA[
+Hcs_uploader_Model_Uploader::delete(array('resource_name' => 'post', 'resource_id' => $post_id));
+		]]></hook>
+
+		<hook id="fn_delete_topic_qr_delete_topic_posts"><![CDATA[
+foreach($post_ids as $key => $val) {
+    Hcs_uploader_Model_Uploader::delete(array('resource_name' => 'post', 'resource_id' => $val));
+}
+		]]></hook>
+
+		<hook id="fn_delete_user_qr_delete_user"><![CDATA[
+if( $delete_posts ) {
+    $files = scandir(FORUM_ROOT.$forum_config['uploader_basefolder'].$user_id);
+    foreach ($files as $file) {
+        if ($file != '.' && $file != '..') {
+            @unlink(FORUM_ROOT.$forum_config['uploader_basefolder'].$user_id.'/'.$file);
+        }
+    }
+
+    @rmdir(FORUM_ROOT.$forum_config['uploader_basefolder'].$user_id);
+}
+		]]></hook>
+
+        <hook id="move_post_loop_insert_end"><![CDATA[
+$query = array(
+    'UPDATE' => 'upload_files',
+    'SET' => 'resource_id = '.$new_post_id,
+    'WHERE' => 'resource_name = \'post\' && resource_id = '.$cur_post['id'],
+);
+$forum_db->query_build($query); // or error(__FILE__, __LINE__);
+        ]]></hook>
+
+        <hook id="vt_quickpost_pre_fieldset_end,po_pre_optional_fieldset"><![CDATA[
+Hcs_uploader_Model_Hooks::vt_quickpost_pre_fieldset_end();
+print Hcs_uploader_Model_Uploader::get_form('post');
+        ]]></hook>
+
+
+        <hook id="ed_pre_checkbox_display"><![CDATA[
+Hcs_uploader_Model_Hooks::vt_quickpost_pre_fieldset_end($id);
+print Hcs_uploader_Model_Uploader::get_form('post');     
+        ]]></hook>
+
+        <hook id="vt_quickpost_pre_fieldset,ed_pre_main_fieldset,po_pre_req_info_fieldset"><![CDATA[
+if (!isset($forum_user['pun_bbcode_enabled']) && !isset($forum_user['sc_wysiwyg_enabled'])) {
+    App::load_language('hcs_uploader');
+    Hcs_uploader_Model_Hooks::vt_quickpost_pre_fieldset();
+}        
+        ]]></hook>
+                
+        <hook id="pun_bbcode_pre_buttons_output"><![CDATA[
+Hcs_uploader_Model_Hooks::pun_bbcode_pre_buttons_output($this);
+        ]]></hook>
+
+
+        <!--  add fancybox gallery functionality -->
+        <hook id="ps_handle_img_tag_end"><![CDATA[
+global $cur_post, $forum_config;
+if (isset($cur_post['id']) && stripos($url,forum_link($forum_config['uploader_basefolder']))!==false){
+    $img_tag = str_replace(array('<span class="postimg">','</span>',' alt="'.forum_htmlencode($alt).'"'), array('<span class="postimg"><a href="'.str_replace('thumbnail/','',$url).'" data-lightbox="post-'.$cur_post['id'].'">','</a></span>', ''),$img_tag);
+}
+        ]]></hook>
+
+	</hooks>
+	
+</extension>
