@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE extension SYSTEM "ext-1.0.dtd">
+
+<!--
+/**
+ * Add topic author indicator in post info
+ *
+ *	hcs_topic_author 
+ * @copyright (C) 2016 hcs hcs@mail.ru
+ * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+ *
+ *	Extension for PunBB (C) 2008-2016 PunBB
+ * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+ */
+-->
+
+<extension engine="1.0">
+	<id>hcs_topic_author</id>
+	<title>Topic author indicator</title>
+	<version>1.0.1</version>
+	<description>Add topic author indicator in post info</description>
+	<author>hcs</author>
+	<minversion>1.4.4</minversion>
+	<maxtestedon>1.4.4</maxtestedon>
+
+
+	<hooks>
+		<hook id="vt_row_pre_display"><![CDATA[
+if ($cur_post['poster_id'] == $cur_topic['author_id']) {
+    if (file_exists($ext_info['path'].'/lang/'.$forum_user['language'].'.php'))
+        require $ext_info['path'].'/lang/'.$forum_user['language'].'.php';
+    else
+        require $ext_info['path'].'/lang/English.php';
+        
+    //$forum_page['author_info']['is_author'] = '<li><button class="btn btn-primary">'.$lang_topic_author['Topic author'].'</button></li>';
+    if (!isset($forum_page['author_info'][0])) {
+        array_unshift($forum_page['author_info'], '<li><span class="label label-info" style="background-color:rgb(74, 137, 215)">'.$lang_topic_author['Topic author'].'</span></li>');
+    }
+}
+		]]></hook>
+		
+		<hook id="vt_qr_get_topic_info"><![CDATA[
+$query['SELECT'] .= ', u.id AS author_id';		
+$query['JOINS'][] = array(
+    'LEFT JOIN'    => 'posts AS p',
+    'ON'            => 't.first_post_id=p.id'
+);		
+$query['JOINS'][] = array(
+    'LEFT JOIN'    => 'users AS u',
+    'ON'            => 'u.id=p.poster_id'
+);
+		]]></hook>
+
+	</hooks>
+</extension>

@@ -1,0 +1,640 @@
+.sceditor-button div::after, div.sceditor-grip:after  {
+    font-family: MaterialDesignIcons;
+    color: inherit;
+    display: inline-block;
+    margin-right: .5em;
+    font: normal normal normal 14px/1 MaterialDesignIcons;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html.sceditor-maximized {
+    overflow: hidden
+}
+
+.sceditor-button div,div.sceditor-grip {
+    background-image: url(../images/famfamfam.png);
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 16px
+}
+
+.sceditor-button div:after {
+    text-indent: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 1.7rem
+}
+
+.sceditor-button-youtube div:after {
+    color: #D64140;
+    content: "\f5c3"
+}
+
+.sceditor-button-vimeo div:after {
+    color: #499DD0;
+    content: "\f577"
+}
+
+.sceditor-button-link div:after {
+    content: "\f339"
+}
+
+.sceditor-button-unlink div:after {
+    content: "\f33a"
+}
+
+.sceditor-button-underline div:after {
+    content: "\f287"
+}
+
+.sceditor-button-time div:after {
+    content: ""
+}
+
+.sceditor-button-table div {
+    background-position: 0 -80px
+}
+
+.sceditor-button-superscript div:after {
+    content: ""
+}
+
+.sceditor-button-subscript div:after {
+    content: ""
+}
+
+.sceditor-button-strike div:after {
+    content: "\f280"
+}
+
+.sceditor-button-source div:after {
+    content: "\f21a"
+}
+
+.sceditor-button-size div:after {
+    content: "\f27f"
+}
+
+.sceditor-button-rtl div {
+    background-position: 0 -176px
+}
+
+.sceditor-button-right div:after {
+    content: "\f263"
+}
+
+.sceditor-button-removeformat div:after {
+    content: "\f265"
+}
+
+.sceditor-button-quote div:after {
+    content: "\f27e"
+}
+
+.sceditor-button-print div {
+    background-position: 0 -240px
+}
+
+.sceditor-button-pastetext div {
+    background-position: 0 -256px
+}
+
+.sceditor-button-paste div {
+    background-position: 0 -272px
+}
+
+.sceditor-button-outdent div {
+    background-position: 0 -288px
+}
+
+.sceditor-button-orderedlist div:after {
+    content: "\f27b";
+    font-size: 1.9rem
+}
+
+.sceditor-button-maximize div:after {
+    content: ""
+}
+
+.sceditor-maximize .sceditor-button-maximize div:after {
+    content: ""
+}
+
+.sceditor-button-ltr div {
+    background-position: 0 -336px
+}
+
+.sceditor-button-left div:after {
+    content: "\f262"
+}
+
+.sceditor-button-justify div:after {
+    content: "\f261"
+}
+
+.sceditor-button-italic div:after {
+    content: "\f277"
+}
+
+.sceditor-button-indent div {
+    background-position: 0 -400px
+}
+
+.sceditor-button-image div:after {
+    content: "\f2e9"
+}
+
+.sceditor-button-horizontalrule div {
+    background-position: 0 -432px
+}
+
+.sceditor-button-format div {
+    background-position: 0 -448px
+}
+
+.sceditor-button-font div:after {
+    content: 'A';
+    top: -1px;
+    text-align: center;
+    width: 100%;
+    left: 1px
+}
+
+.sceditor-button-emoticon div:after {
+    content: "\f1f6"
+}
+
+.sceditor-button-email div {
+    background-position: 0 -496px
+}
+
+.sceditor-button-date div:after {
+    content: ""
+}
+
+.sceditor-button-cut div {
+    background-position: 0 -528px
+}
+
+.sceditor-button-copy div {
+    background-position: 0 -544px
+}
+
+.sceditor-button-color div:after {
+    content: "\f301"
+}
+
+.sceditor-button-code div:after {
+    content: "\f5c0"
+}
+
+.sceditor-button-center div:after {
+    content: "\f260"
+}
+
+.sceditor-button-bulletlist div:after {
+    content: "\f279";
+    font-size: 1.9rem
+}
+
+.sceditor-button-bold div:after {
+    content: "\f264"
+}
+
+div.sceditor-grip:after {
+    font-size: 15px;
+    content: "\f1dc" "\f1dc";
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    width: 100px;
+    text-align: center;
+    margin-left: -50px;
+    letter-spacing: -2.4px
+}
+
+.sourceMode div.sceditor-grip:after {
+    color: #969696
+}
+
+.sceditor-container {
+    width: 100% !important;
+    position: relative;
+    background: #fff;
+    line-height: 1;
+    border-radius: 4px;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box
+}
+
+.sceditor-container *,.sceditor-container :after,.sceditor-container :before
+    {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box
+}
+
+.sceditor-container,.sceditor-container div,div.sceditor-dropdown,div.sceditor-dropdown div
+    {
+    padding: 0;
+    margin: 0;
+    z-index: 3
+}
+
+.sceditor-container iframe,.sceditor-container textarea {
+    outline: 0;
+    margin: 0;
+    padding: 8px 10px;
+    resize: none;
+    background: #fff;
+    display: block;
+    border: 1px solid #E7E7E7;
+    border-width: 0 4px;
+    width: 100% !important;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box
+}
+
+div.sceditor-grip,ul.topiclist dd {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box
+}
+
+.sceditor-container.sourceMode textarea,.sceditor-container.sourceMode textarea:focus
+    {
+    background-color: #444348;
+    border-color: #333;
+    color: #fff;
+    font-weight: 400;
+    font-size: 1.4rem;
+    font-family: consolas, monospace
+}
+
+div.sceditor-resize-cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #000;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    opacity: .3
+}
+
+.ie6 div.sceditor-resize-cover,.ie7 div.sceditor-resize-cover,.ie8 div.sceditor-resize-cover
+    {
+    background: #efefef
+}
+
+.sceditor-container.ie6 {
+    overflow: hidden
+}
+
+div.sceditor-grip {
+    overflow: hidden;
+    width: 100%;
+    height: 9px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border: 0;
+    box-sizing: border-box;
+    background-color: #E7E7E7;
+    z-index: 3;
+    background-image: none;
+    cursor: n-resize
+}
+
+div.sceditor-grip:hover {
+    background-color: #dfdfdf
+}
+
+.sourceMode div.sceditor-grip {
+    background: #2C2B2F;
+    border-color: #333
+}
+
+.sourceMode div.sceditor-grip:hover {
+    background-color: #242424
+}
+
+.sceditor-container {
+    padding-bottom: 9px !important
+}
+
+.sceditor-container.sceditor-maximize {
+    padding-bottom: 0 !important
+}
+
+.sceditor-maximize {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100% !important;
+    width: 100% !important;
+    border-radius: 0;
+    background-clip: padding-box;
+    z-index: 2000
+}
+
+.btn-block,input[type=button].btn-block,input[type=submit].btn-block,input[type=reset].btn-block
+    {
+    width: 100%
+}
+
+body.sceditor-maximize,html.sceditor-maximize {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden
+}
+
+.ie6.sceditor-maximize {
+    position: absolute
+}
+
+.sceditor-maximize div.sceditor-grip {
+    display: none
+}
+
+.sceditor-maximize div.sceditor-toolbar {
+    border-radius: 0;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box
+}
+
+div.sceditor-dropdown {
+    position: absolute;
+    border: 1px solid #ccc;
+    background: #fff;
+    color: #333;
+    z-index: 4000;
+    padding: 10px;
+    line-height: 1;
+    border-radius: 2px;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    -webkit-box-shadow: 1px 2px 4px rgba(0, 0, 0, .2);
+    box-shadow: 1px 2px 4px rgba(0, 0, 0, .2)
+}
+
+div.sceditor-dropdown a,div.sceditor-dropdown a:link {
+    color: #333
+}
+
+div.sceditor-dropdown form {
+    margin: 0
+}
+
+div.sceditor-dropdown label {
+    display: block;
+    font-weight: 700;
+    color: #3c3c3c;
+    padding: 4px 0
+}
+
+div.sceditor-dropdown textarea {
+    padding: 6px
+}
+
+div.sceditor-dropdown .button {
+    font-weight: 500;
+    color: #444;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 2px;
+    cursor: pointer;
+    margin: 10px 0 0
+}
+
+#tabs>ul>.activetab>a,.sceditor-more {
+    font-weight: 700
+}
+
+div.sceditor-dropdown .button:hover {
+    background: #f3f3f3;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .15);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .15)
+}
+
+div.sceditor-font-picker,div.sceditor-fontsize-picker,div.sceditor-format
+    {
+    padding: 6px 0
+}
+
+div.sceditor-color-picker,div.sceditor-emoticons,div.sceditor-more-emoticons
+    {
+    padding: 0
+}
+
+.sceditor-pastetext textarea {
+    border: 1px solid #bbb;
+    width: 20em
+}
+
+.sceditor-emoticons img,.sceditor-more-emoticons img {
+    padding: 3px;
+    cursor: pointer;
+    margin: 2px
+}
+
+div.sceditor-emoticons>div {
+    padding: 5px
+}
+
+.sceditor-more {
+    display: none !important;
+    border-top: 1px solid #bbb;
+    text-align: center;
+    cursor: pointer;
+    padding: 6px 0
+}
+
+.sceditor-dropdown a:hover {
+    background: #eee
+}
+
+.sceditor-font-option,.sceditor-fontsize-option,.sceditor-format a {
+    display: block;
+    padding: 7px 10px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #222
+}
+
+.sceditor-fontsize-option {
+    padding: 7px 13px
+}
+
+.sceditor-color-column {
+    float: left;
+    width: 110px;
+    padding: 5px !important
+}
+
+.sceditor-color-option {
+    display: inline-block;
+    border: 1px solid #fff;
+    height: 25px;
+    width: 25px;
+    overflow: hidden;
+    margin-bottom: -1px
+}
+
+.sceditor-color-option[data-color="#fff"] {
+    -webkit-box-shadow: inset 0 0 0 1px #aaa;
+    box-shadow: inset 0 0 0 1px #aaa
+}
+
+.sceditor-color-option:hover {
+    border: 1px solid #333;
+    -webkit-box-shadow: none;
+    box-shadow: none
+}
+
+div.sceditor-toolbar {
+    overflow: hidden;
+    background: #E7E7E7;
+    border: 0;
+    line-height: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    padding: 3px 1px
+}
+
+.sceditor-maximize div.sceditor-toolbar {
+    border-top: 0
+}
+
+div.sceditor-group {
+    display: inline-block;
+    padding: 3px 5px 3px 4px;
+    height: 28px;
+    border-right: 1px solid #C1C1C1;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box
+}
+
+div.sceditor-group:last-child {
+    border: 0
+}
+
+.ie6 div.sceditor-group,.ie7 div.sceditor-group {
+    display: inline;
+    zoom: 1
+}
+
+.sceditor-button {
+    border-radius: 2px;
+    float: left;
+    cursor: pointer;
+    padding: 4px 7px;
+    margin-right: 1px;
+    position: relative;
+    width: 16px;
+    height: 20px;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    text-indent: -9999px
+}
+
+.ie .sceditor-button {
+    text-indent: 0
+}
+
+.ie6 .sceditor-button,.ie7 .sceditor-button {
+    float: none !important;
+    display: inline;
+    zoom: 1
+}
+
+.ie6 .sceditor-button {
+    padding: 0
+}
+
+.ie6 .sceditor-button div {
+    margin: 5px
+}
+
+.ie7 .sceditor-button div {
+    margin: 5px 0
+}
+
+.sceditor-button:hover {
+    background: rgba(0, 0, 0, .08)
+}
+
+.sceditor-button.active {
+    background: rgba(0, 0, 0, .15)
+}
+
+.sceditor-button.active div {
+    color: #222
+}
+
+.sceditor-button.disabled:hover {
+    background: inherit;
+    cursor: default;
+    -webkit-box-shadow: none;
+    box-shadow: none
+}
+
+.sceditor-button,.sceditor-button div {
+    display: block
+}
+
+.sceditor-button div {
+    margin: 2px 0;
+    padding: 0;
+    overflow: hidden;
+    line-height: 0;
+    font-size: 0;
+    color: #444;
+    background-image: none;
+    position: relative
+}
+
+.sceditor-button.disabled div {
+    filter: alpha(opacity = 30);
+    opacity: .3
+}
+
+.sceditor-button.text,.sceditor-button.text div,.sceditor-button.text-icon,.sceditor-button.text-icon div,.text .sceditor-button,.text .sceditor-button div,.text-icon .sceditor-button,.text-icon .sceditor-button div
+    {
+    width: auto;
+    overflow: visible;
+    line-height: 16px;
+    font-size: 1em;
+    color: inherit;
+    text-indent: 0
+}
+
+.sceditor-button.text div,.text .sceditor-button div {
+    padding: 0 2px;
+    background: 0 0
+}
+
+.sceditor-button.text-icon div,.text-icon .sceditor-button div {
+    padding: 0 2px 0 20px
+}
+
+.rtl div.sceditor-grip {
+    right: auto;
+    left: 0
+}
+
+.sceditor-insertimage div {
+    display: none
+}
+
+

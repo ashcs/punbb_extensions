@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE extension SYSTEM "ext-1.0.dtd">
+
+<!--
+/**
+ * Adds a SCE WYSIWYG BBCode editor to PunBB.
+ *
+ * @copyright (C) 2011-2012 Sam Clarke
+ * @copyright (C) 2008-2016 PunBB, partially based on code (C) 2011-2012 Sam Clarke
+ * @license http://www.gnu.org/licenses/gpl.html GPL
+ * @license http://www.opensource.org/licenses/mit-license.php MIT
+ * @package pun_wysiwyg
+ */
+-->
+
+<extension engine="1.0">
+	<id>pun_wysiwyg</id>
+	<title>PUN WYSIWYG BBCode SC editor </title>
+	<version>2.0.0</version>
+	<description>Adds a WYSIWYG BBCode SC editor to PunBB.</description>
+	<author>Sam Clarke, PunBB team</author>
+
+	<minversion>1.4.4</minversion>
+	<maxtestedon>1.4.4</maxtestedon>
+
+	<dependencies>
+		<dependency>pun_jquery</dependency>
+	</dependencies>
+
+	<install><![CDATA[
+		if (!isset($forum_config['o_sc_wysiwyg_youtube']))
+			forum_config_add('o_sc_wysiwyg_youtube', '1');
+
+		if (!isset($forum_config['o_sc_wysiwyg_toolbar']))
+			forum_config_add('o_sc_wysiwyg_toolbar', 'bold,italic,underline,strike|left,center,right,justify|size,color,removeformat|bulletlist,orderedlist|code,quote|image,email,link,unlink|emoticon,youtube|source');
+	]]></install>
+
+	<uninstall><![CDATA[
+		forum_config_remove('o_sc_wysiwyg_toolbar');
+		forum_config_remove('o_sc_wysiwyg_youtube');
+	]]></uninstall>
+
+	<hooks>
+		<hook id="hd_head"><![CDATA[
+			global $smilies, $base_url;
+
+			// needed for $smilies
+			if (!defined('FORUM_PARSER_LOADED'))
+				require FORUM_ROOT.'include/parser.php';
+
+			$wysiwyg_smilies = array('dropdown' => array(), 'hidden' => array());
+			foreach($smilies as $code => $url)
+			{
+				$url =  $base_url . '/img/smilies/' . $url;
+
+				if(in_array($url, $wysiwyg_smilies['dropdown']))
+					$wysiwyg_smilies['hidden'][$code] = $url;
+				else
+					$wysiwyg_smilies['dropdown'][$code] = $url;
+			}
+
+			if ((FORUM_PAGE == 'viewtopic' && $forum_config['o_quickpost']) || in_array(FORUM_PAGE, array('post', 'postedit')))
+			{
+				if (file_exists($ext_info['path'].'/style/'.$forum_user['style'].'/jquery.sceditor.min.css'))
+					$style = $ext_info['url'].'/style/'.$forum_user['style'].'/jquery.sceditor.min.css';
+				else
+					$style = $ext_info['url'].'/style/Oxygen/jquery.sceditor.min.css';
+
+				$forum_loader->add_css($style, array('weight' => 0));
+			}
+		]]></hook>
+
+		<hook id="ft_js_include" priority="5"><![CDATA[
+			if (isset($forum_loader) && ((FORUM_PAGE == 'viewtopic' && $forum_config['o_quickpost']) || in_array(FORUM_PAGE, array('post', 'postedit'))))
+			{
+				$forum_loader->add_js($ext_info['url'].'/js/jquery.sceditor.bbcode.min.js');
+
+				$sceditor_langs = array(
+						'Arabic'              => 'ar',
+						'Norwegian'           => 'no',
+						'Russian'             => 'ru',
+						'French'              => 'fr',
+						'Swedish'             => 'sv',
+						'Dutch'               => 'nl',
+						'German'              => 'de',
+						'BrazilianPortuguese' => 'pt-BR',
+						'Vietnamese'          => 'vi',
+						'Estonian'            => 'et',
+						'Spanish'             => 'es',
+					);
+
+				if(isset($sceditor_langs[$forum_user['language']]))
+				{
+					$locale_opt = $lang_code = $sceditor_langs[$forum_user['language']];
+					$forum_loader->add_js($ext_info['url'].'/js/languages/' . $lang_code . '.js');
+				}
+				else
+					$locale_opt = 'en';
+
+				if (file_exists($ext_info['path'].'/style/'.$forum_user['style'].'/jquery.sceditor.default.min.css'))
+					$style = $forum_user['style'];
+				else
+					$style = 'Oxygen';
+
+				$forum_loader->add_js('
+						window.sceditor_opts = {
+							root_url: "' . $ext_info['url'] . '",
+							style: "' . $forum_user['style'] . '",
+							locale: "' . $locale_opt . '",
+							toolbar: "' . $forum_config['o_sc_wysiwyg_toolbar'] . '",
+							emoticons: ' . json_encode($wysiwyg_smilies) . '
+						};
+					',
+					array('type' => 'inline')
+				);
+
+				$forum_loader->add_js($ext_info['url'].'/js/jquery.sceditor.punbb-helper.js');
+			}
+		]]></hook>
+
+		<hook id="pun_pm_fn_send_form_pre_output"><![CDATA[
+			global $smilies, $base_url;
+		]]></hook>
+
+		<hook id="ps_preparse_tags_start"><![CDATA[
+			// Add extra BBCodes the editor supports
+			$tags[]        = 's';
+			$tags_inline[] = 's';
+			$tags[]        = 'sub';
+			$tags_inline[] = 'sub';
+			$tags[]        = 'sup';
+			$tags_inline[] = 'sup';
+			$tags[]        = 'size';
+			$tags_inline[] = 'size';
+			//$tags[]        = 'font';
+			//$tags_inline[] = 'font';
+
+			$tags[]        = 'center';
+			$tags_block[]  = 'center';
+			$tags[]        = 'left';
+			$tags_block[]  = 'left';
+			$tags[]        = 'right';
+			$tags_block[]  = 'right';
+			$tags[]        = 'justify';
+			$tags_block[]  = 'justify';
+
+			if($forum_config['o_sc_wysiwyg_youtube'])
+				$tags[]        = 'youtube';
+
+			// allow nesting
+			$tags_nested['color']  = 100;
+			$tags_nested['colour'] = 100;
+			//$tags_nested['font']   = 100;
+			$tags_nested['center'] = 100;
+			$tags_nested['left']   = 100;
+			$tags_nested['right']  = 100;
+			$tags_nested['size']   = 100;
+
+			// allow font and size of links to be changed
+			$tags_limit_bbcode['url'][] = 'size';
+			//$tags_limit_bbcode['url'][] = 'font';
+
+			$tags_limit_bbcode['email'][] = 'size';
+			//$tags_limit_bbcode['email'][] = 'font';
+
+			$tags_limit_bbcode['*'][] = 'size';
+			//$tags_limit_bbcode['*'][] = 'font';
+			
+			$tags_opened = $tags;
+			$tags_closed = $tags;
+			
+			$text = preg_replace('#\[font=\'?"?(.*?)"?\'?]#ms', '', $text);
+			$text = preg_replace('#\[/font\]#ms', '', $text);
+			
+		]]></hook>
+
+		<hook id="ps_do_bbcode_replace"><![CDATA[
+		
+			unset($pattern[array_search('#\[colou?r=([a-zA-Z]{3,20}|\#[0-9a-fA-F]{6}|\#[0-9a-fA-F]{3})](.*?)\[/colou?r\]#ms', $pattern)]);
+			unset($replace[array_search('<span style=\"color: $matches[1]\">$matches[2]</span>', $replace)]);
+			
+			$pattern[] = '#\[s\](.*?)\[/s\]#ms';
+			$replace[] = '<span style=\"text-decoration: line-through\">$matches[1]</span>';
+
+			$pattern[] = '#\[sup\](.*?)\[/sup\]#ms';
+			$replace[] = '<sup>$matches[1]</sup>';
+			$pattern[] = '#\[sub\](.*?)\[/sub\]#ms';
+			$replace[] = '<sub>$matches[1]</sub>';
+
+			if($forum_config['o_sc_wysiwyg_youtube'])
+			{
+				$pattern[] = '#\[youtube\]([a-zA-Z0-9_\-]+)\[/youtube\]#ms';
+				$replace[] = '<iframe width=\"560\" height=\"315\" src=\"http://www.youtube.com/embed/$matches[1]\" frameborder=\"0\" allowfullscreen></iframe>';
+			}
+			
+		]]></hook>
+
+		<hook id="ps_do_bbcode_end"><![CDATA[
+			if(!function_exists('handle_size_tag'))
+			{
+				function handle_size_tag($matches)
+				{
+					$size = 'xx-small';
+
+					/*
+					Font tag sizes 1-7 should be:
+					1 = x-small
+					2 = small
+					3 = medium
+					4 = large
+					5 = x-large
+					6 = xx-large
+					7 = ?? in chrome it's 48px
+					*/
+					if($matches[1] == 1)
+						$size = 'x-small';
+					else if($matches[1] == 2)
+						$size = 'small';
+					else if($matches[1] == 3)
+						$size = 'medium';
+					else if($matches[1] == 4)
+						$size = 'large';
+					else if($matches[1] == 5)
+						$size = 'x-large';
+					else if($matches[1] == 6)
+						$size = 'xx-large';
+					else if($matches[1] == 7)
+						$size = '48px';
+					else if($matches[1][strlen($matches[1]) - 1] === '%'
+						&& is_numeric(substr($matches[1], 0, -1)))
+						$size = $matches[1];
+					else
+					{
+						if(!is_numeric($matches[1]))
+							$matches[1] = 13;
+						else if($matches[1] < 6)
+							$matches[1] = 6;
+						else if($matches[1] > 48)
+							$matches[1] = 48;
+						else
+							$matches[1] = intval($matches[1]);
+
+						$size = $matches[1] . 'px';
+					}
+
+					return "<span style=\"font-size: {$size}\">{$matches[2]}</span>";
+				}
+			}
+
+			$pats = array();
+			$reps = array();
+
+			$pats[] = '#\[colou?r=([a-zA-Z]{3,20}|\#[0-9a-fA-F]{6}|\#[0-9a-fA-F]{3})]((?:.(?!\[colou?r))*?)\[/colou?r\]#ms';
+			$reps[] = '<span style="color: $1">$2</span>';
+            //$pats[] = '#\[font=\'?"?([a-zA-Z ,\-]{3,})"?\'?]((?:.(?!\[font))*?)\[/font\]#ms';
+            //$reps[] = '<span style="font-family: $1">$2</span>';
+			$pats[] = '#\[center]((?:.(?!\[center))*?)\[/center\]\r?\n?#ms';
+			$reps[] = '<div style="text-align: center">$1</div>';
+			$pats[] = '#\[left]((?:.(?!\[left))*?)\[/left\]\r?\n?#ms';
+			$reps[] = '<div style="text-align: left">$1</div>';
+			$pats[] = '#\[right]((?:.(?!\[right))*?)\[/right\]\r?\n?#ms';
+			$reps[] = '<div style="text-align: right">$1</div>';
+			$pats[] = '#\[justify]((?:.(?!\[justify))*?)\[/justify\]\r?\n?#ms';
+			$reps[] = '<div style="text-align: justify">$1</div>';
+
+			foreach($pats as $index => $p)
+			{
+				do
+				{
+					$text = preg_replace($p, $reps[$index], $text, -1, $count);
+				}
+				while($count > 0);
+			}
+
+			do
+			{
+				$text = preg_replace_callback('#\[size=([^\]]+)]((?:.(?!\[size))*?)\[/size\]#ms',
+					'handle_size_tag',
+					$text,
+					-1,
+					$count);
+			}
+			while($count > 0);
+			
+			//$pats[] = '#\[font=\'?"?([a-zA-Z ,\-]{3,})"?\'?]((?:.(?!\[font))*?)\[/font\]#ms';
+            //$pats[] = '#\[font=\'?"?(.*?)"?\'?]((?:.(?!\[font))*?)\[/font\]#ms';
+            //(.*?)\](.*?)\[\/font\]
+            //$reps[] = '!!<span style="font-family: $1">$2</span>!!';
+            //$reps[] = '$2';
+            
+if(!function_exists('handle_font_tag'))
+{
+    function handle_font_tag($matches)
+    {
+        $fonts = preg_replace('#[^a-zA-Z, \-]#', '', $matches[1]);
+        return '<span style="font-family:'.$fonts.'">'.$matches[2].'</span>';
+    }
+}  
+///$text = preg_replace_callback('#\[font=\'?"?(.*?)"?\'?](?!\[font)(.*?)\[/font\]#ms', 'handle_font_tag', $text);			
+
+		]]></hook>
+
+		<hook id="aop_features_validation"><![CDATA[
+			if(!function_exists('sceditor_remove_empty'))
+			{
+				function sceditor_remove_empty($array)
+				{
+					foreach ($array as $key => $val)
+					{
+					    if (empty($val))
+					        unset($array[$key]);
+					}
+
+					return $array;
+				}
+			}
+
+			// remove all empty groups and buttons
+			$form['sc_wysiwyg_toolbar'] = implode(',', sceditor_remove_empty(explode(',', $form['sc_wysiwyg_toolbar'])));
+			$form['sc_wysiwyg_toolbar'] = implode('|', sceditor_remove_empty(explode('|', $form['sc_wysiwyg_toolbar'])));
+
+			if (!isset($form['sc_wysiwyg_toolbar']) || empty($form['sc_wysiwyg_toolbar']))
+				$form['sc_wysiwyg_toolbar'] = 'bold,italic,underline,strike,subscript,superscript|left,center,right,justify|font,size,color,removeformat|cut,copy,paste,pastetext|bulletlist,orderedlist|code,quote|image,email,link,unlink|emoticon,youtube,date,time|source';
+
+			if (!isset($form['sc_wysiwyg_youtube']) || $form['sc_wysiwyg_youtube'] != '1')
+				$form['sc_wysiwyg_youtube'] = '0';
+			else
+				$form['sc_wysiwyg_youtube'] = '1';
+
+
+		]]></hook>
+		<hook id="aop_features_avatars_fieldset_end"><![CDATA[
+			if (file_exists($ext_info['path'].'/lang/'.$forum_user['language'].'.php'))
+				include $ext_info['path'].'/lang/'.$forum_user['language'].'.php';
+			else
+				include $ext_info['path'].'/lang/English.php';
+
+			?><div class="content-head">
+				<h2 class="hn">
+					<span><?php echo $lang_sc_wysiwyg['PUN WYSIWYG']; ?></span>
+				</h2>
+			</div>
+			<fieldset class="frm-group group1">
+				<legend class="group-legend">
+					<span><?php echo $lang_sc_wysiwyg['Settings']; ?></span>
+				</legend>
+				<div class="sf-set set<?php echo ++$forum_page['item_count'] ?>">
+					<div class="sf-box text">
+						<span class="fld-input">
+							<input id="fld<?php echo ++$forum_page['fld_count'] ?>" type="text" size="40" value="<?php echo $forum_config['o_sc_wysiwyg_toolbar']; ?>" name="form[sc_wysiwyg_toolbar]"/>
+						</span>
+						<label for="fld<?php echo $forum_page['fld_count'] ?>">
+							<span><?php echo $lang_sc_wysiwyg['WYSIWYG Toolbar']; ?></span>
+							<small><?php echo $lang_sc_wysiwyg['WYSIWYG Toolbar Description']; ?></small>
+						</label>
+					</div>
+				</div>
+				<div class="sf-set set<?php echo ++$forum_page['item_count'] ?>">
+					<div class="sf-box checkbox">
+						<span class="fld-input">
+							<input id="fld<?php echo ++$forum_page['fld_count'] ?>" type="checkbox" <?php if ($forum_config['o_sc_wysiwyg_youtube'] == '1') echo ' checked="checked"' ?> value="1" name="form[sc_wysiwyg_youtube]"/>
+						</span>
+						<label for="fld<?php echo $forum_page['fld_count'] ?>">
+							<span><?php echo $lang_sc_wysiwyg['Enable YouTube Tag']; ?></span>
+							<?php echo $lang_sc_wysiwyg['Enable YouTube Tag Description']; ?>
+						</label>
+					</div>
+				</div>
+			</fieldset><?php
+		]]></hook>
+
+		<!-- Add image size attributes to BBCode -->
+		<hook id="ps_handle_img_tag_start"><![CDATA[
+			$attrs = '';
+
+			if ($alt != null && preg_match("/([0-9]+)[xX]([0-9]+)/", $alt, $matches))
+			{
+				$attrs .= " width=\"{$matches[1]}\"";
+				$attrs .= " height=\"{$matches[2]}\"";
+			}
+
+			$img_tag = '<a href="'.$url.'">&lt;'.$lang_common['Image link'].'&gt;</a>';
+
+			if ($is_signature && $forum_user['show_img_sig'] != '0')
+				$img_tag = '<img class="sigimage" src="'.$url.'"'.$attrs.' alt="'.forum_htmlencode($url).'" />';
+			else if (!$is_signature && $forum_user['show_img'] != '0')
+				$img_tag = '<span class="postimg"><img src="'.$url.'"'.$attrs.' alt="'.forum_htmlencode($url).'" /></span>';
+
+			$return = ($hook = get_hook('ps_handle_img_tag_end')) ? eval($hook) : null;
+			if ($return != null)
+				return $return;
+
+			return $img_tag;
+		]]></hook>
+
+	</hooks>
+</extension>

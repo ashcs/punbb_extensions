@@ -1,0 +1,32 @@
+
+
+.collapse_category_wrapper.collapsed {
+    white-space: nowrap;
+    opacity: .7;
+    margin-bottom: .7em !important; 
+	border-bottom: 1px solid #CCCCCC;
+}
+
+.collapse_category_wrapper.collapsed .main-category, .collapse_category_wrapper.collapsed .main-subhead{
+    display: none;
+}
+
+
+.collapse_category_wrapper.collapsed .toggler {
+    background:url(toggler.gif) left center no-repeat;
+}
+
+.collapse_category_wrapper .toggler {
+    width:9px;
+    background:url(toggler.gif) -9px center no-repeat;  
+    padding-top:1px;
+}
+
+.collapse_category_wrapper:hover   .toggler {
+    background:url(toggler.gif) -27px center no-repeat;
+}
+
+.collapse_category_wrapper.collapsed:hover .toggler
+{
+    background:url(toggler.gif) -18px center no-repeat;
+}

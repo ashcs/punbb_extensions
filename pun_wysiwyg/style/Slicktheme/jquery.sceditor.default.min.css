@@ -1,0 +1,82 @@
+html,body,p,code:before,table {
+	margin: 0;
+	padding: 0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	color: #111;
+	height:100%
+}
+
+body {height:100%}
+
+ul,ol {
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-top: 0;
+	padding-bottom: 0
+}
+
+table,td {
+	border: 1px dotted #000;
+	empty-cells: show
+}
+
+code:before {
+    content: "Code";
+    margin: -8px;
+    margin-bottom: 8px;
+    padding: 10px 15px;
+    background-color: #E4E4E4;
+    display: block;
+    position: relative;
+    font-style: normal;
+    font-weight: bold;
+	   font-family: -moz-fixed;
+    white-space: pre;
+}
+
+code {
+    margin-top: .3em;
+    font-size: 0.867em;
+    position: relative;
+    background: #F5F5F5;
+    white-space: pre;
+    display: block;
+    border-left: 3px solid #499DD0;
+    padding: 8px;
+}
+
+code {
+    font-size: 0.867em;
+    white-space: pre;
+
+}
+
+code:before,code {
+	display: block;
+	text-align: left
+}
+
+blockquote {
+	position: relative;
+	margin: .25em 0;
+	padding: 4px 15px 0;
+    margin-left: 1.2em;
+    border-left: 3px solid #bcbcbc;
+}
+
+blockquote cite {
+	font-weight: bold;
+	display: block;
+	font-size: 1em;
+    padding: 4px 15px 0;
+}
+
+div {
+	min-height: 1em
+}
+
+h1,h2,h3,h4,h5,h6 {
+	padding: 0;
+	margin: 0
+}

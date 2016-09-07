@@ -1,0 +1,10 @@
+{
+  "name" : "Recaptcha for punbb",
+  "require" : {
+    "google/recaptcha": "~1.1"
+  },
+  "repositories" : [ {
+    "type" : "composer",
+    "url" : "https://packagist.org/"
+  } ]
+}

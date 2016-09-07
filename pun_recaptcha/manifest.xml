@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension engine="1.0">
+    <id>pun_recaptcha</id>
+    <title>reCaptcha for PunBB</title>
+    <version>0.0.1</version>
+    <description>This adds reCaptcha Spam Protection.</description>
+    <author>PunBB team, partially based on code by Gordie Lachance</author>
+    <minversion>1.4.4</minversion>
+    <maxtestedon>1.4.5</maxtestedon>
+    <install>
+        <![CDATA[
+forum_config_add('recaptcha_privatekey', '');
+forum_config_add('recaptcha_publickey', '');
+        ]]>
+    </install>
+
+    <uninstall>
+        <![CDATA[
+forum_config_remove('recaptcha_privatekey');
+forum_config_remove('recaptcha_publickey');
+        ]]>
+    </uninstall>
+
+    <hooks>
+    
+        <hook id="rg_register_pre_header_load,li_login_pre_header_load,li_forgot_pass_pre_header_load,pf_change_pass_key_pre_header_load,pf_change_pass_normal_pre_header_load"><![CDATA[
+$forum_loader->add_js('https://www.google.com/recaptcha/api.js');        
+        ]]></hook>
+    
+        <hook id="rg_register_pre_group_end, li_login_pre_group_end,li_forgot_pass_pre_group_end,pf_change_pass_key_pre_fieldset_end,pf_change_pass_normal_pre_fieldset_end"><![CDATA[
+if ($forum_config['recaptcha_publickey'] && $forum_config['recaptcha_privatekey']) {
+?>
+<div class="ct-set set<?php echo ++$forum_page['item_count'] ?>">
+    <div class="ct-box">
+        <div class="g-recaptcha" data-sitekey="<?php echo $forum_config['recaptcha_publickey'] ?>"></div>
+    </div>
+</div>
+<?php
+}
+        ]]></hook>
+
+        <hook id="rg_register_form_submitted, li_login_form_submitted, li_forgot_pass_end_validation,pf_change_pass_key_form_submitted,pf_change_pass_normal_form_submitted"><![CDATA[
+if ($forum_config['recaptcha_publickey'] && $forum_config['recaptcha_privatekey'])
+{
+    if (!isset($_POST['g-recaptcha-response'])) {
+        message($lang_common['Bad request']);
+    }        
+    else
+    {
+        $recaptcha = new \ReCaptcha\ReCaptcha($forum_config['recaptcha_privatekey']);
+        $resp = $recaptcha->verify($_POST['g-recaptcha-response'], get_remote_address());
+        if (!$resp->isSuccess()) {
+            $errors[] = $resp->getErrorCodes();
+        }     
+    }   
+}
+        ]]></hook>        
+
+        <hook id="aop_features_general_fieldset_end">
+            <![CDATA[
+					if (file_exists($ext_info['path'].'/lang/'.$forum_user['language'].'.php')){
+					   include $ext_info['path'].'/lang/'.$forum_user['language'].'.php';
+					}else{
+					   include $ext_info['path'].'/lang/English.php';
+					}
+					?>
+					    <div class="content-head">
+					        <h2 class="hn"><span>ReCaptcha</span></h2>
+					    </div>
+					    <fieldset class="sf-set group-item<?php echo ++$forum_page['group_count'] ?>">
+					        <legend><span>ReCaptcha:</span></legend>
+					            <div class="sf-box text">
+					                <label for="fld<?php echo ++$forum_page['fld_count'] ?>"><span><?php echo $lang_recaptcha['public_key'];?></span></label>
+					                <span class="fld-input"><input size="25" type="text" id="fld<?php echo $forum_page['fld_count'] ?>" name="form[recaptcha_publickey]" value="<?php echo $forum_config['recaptcha_publickey'];?>" /></span>
+					            </div>
+					            <div class="sf-box text">
+					                <label for="fld<?php echo ++$forum_page['fld_count'] ?>"><span><?php echo $lang_recaptcha['private_key'];?></span></label>
+					                <span class="fld-input"><input size="25" type="text" id="fld<?php echo $forum_page['fld_count'] ?>" name="form[recaptcha_privatekey]" value="<?php echo $forum_config['recaptcha_privatekey'];?>" /></span>
+					            </div>
+					    </fieldset>
+					<?php
+            ]]>
+        </hook>
+        <hook id="aop_features_validation">
+            <![CDATA[
+                if (!isset($form['recaptcha_publickey']) || empty($form['recaptcha_publickey']))
+                    $form['recaptcha_publickey'] = '';
+                if (!isset($form['recaptcha_privatekey']) || empty($form['recaptcha_privatekey']))
+                    $form['recaptcha_privatekey'] = '';
+            ]]>
+        </hook>
+        <hook id="aop_pre_update_configuration">
+            <![CDATA[
+                if (isset($form['recaptcha_publickey']))
+                {
+                    if ($form['recaptcha_publickey'] != $forum_config['recaptcha_publickey'])
+                        $forum_db->query('UPDATE '.$forum_db->prefix.'config SET conf_value = \''.$forum_db->escape($form['recaptcha_publickey']).'\' WHERE conf_name = \'recaptcha_publickey\'', true) or error(__FILE__, __LINE__);
+                }
+                if (isset($form['recaptcha_privatekey']))
+                {
+                    if ($form['recaptcha_privatekey'] != $forum_config['recaptcha_privatekey'])
+                        $forum_db->query('UPDATE '.$forum_db->prefix.'config SET conf_value = \''.$forum_db->escape($form['recaptcha_privatekey']).'\' WHERE conf_name = \'recaptcha_privatekey\'', true) or error(__FILE__, __LINE__);
+                }
+            ]]>
+        </hook>
+    </hooks>
+</extension>

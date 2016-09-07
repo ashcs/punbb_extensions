@@ -1,0 +1,25 @@
+.catToggled	{
+	white-space: nowrap;
+	margin-bottom: .7em !important;
+	opacity: .7;
+}
+.catToggled + .main-subhead {
+	display: none;
+}
+.has-toggler.catToggled .toggler {
+	background:url(toggler.gif) left center no-repeat;
+}
+.has-toggler .toggler {
+	width:9px;
+	heigth: 9px;
+	background:url(toggler.gif) -9px center no-repeat;	
+}
+
+.has-toggler:hover   .toggler {
+	background:url(toggler.gif) -27px center no-repeat;
+}
+
+.has-toggler.catToggled:hover .toggler
+{
+	background:url(toggler.gif) -18px center no-repeat;
+}

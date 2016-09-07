@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE extension SYSTEM "ext-1.0.dtd">
+
+<extension engine="1.0">
+	<id>category_collapse</id>
+	<title>Category collapse</title>
+	<version>1.0.0</version>
+	<description>Forum category collapse</description>
+	<author>hcs based on fancy_toggle_cats by dimka.linux@gmail.com</author>
+
+	<minversion>1.4.4</minversion>
+	<maxtestedon>1.4.4</maxtestedon>
+
+	<dependencies>
+		<dependency>pun_jquery</dependency>
+    </dependencies>
+
+	<hooks>
+
+		<hook id="in_forum_loop_start"><![CDATA[
+$class_collapsed = false;
+$has_toggler = false;
+		]]></hook>
+
+		<hook id="in_qr_get_cats_and_forums"><![CDATA[
+			$toggle_cats_toggled = null;
+			if (isset($_COOKIE['collapsed_category'])) {
+				$toggle_cats_toggled = explode(':', $_COOKIE['collapsed_category'], 24);
+			}
+		]]></hook>
+
+		<hook id="in_pre_header_load"><![CDATA[
+
+if (file_exists($ext_info['path'].'/style/'.$forum_user['style'].'/style.css'))
+	$style = $ext_info['url'].'/style/'.$forum_user['style'].'/style.css';
+else
+	$style = $ext_info['url'].'/style/Oxygen/style.css';
+
+$forum_loader->add_css($style,array('type' => 'url'));
+$forum_loader->add_js($ext_info['url'].'/toggle.js', array('weight' => 85, 'async' => true));
+		]]></hook>
+
+		<hook id="in_forum_pre_cat_head"><![CDATA[
+if ($forum_page['cur_category'] != 0)
+    echo "\t".'</div>'."\n";
+    
+if (is_array($toggle_cats_toggled) && in_array($cur_forum['cid'], $toggle_cats_toggled)) {
+	$collapsed = ' collapsed';
+}
+else {
+    $collapsed = '';
+}
+$has_toggler = true;
+
+echo "\t".'<div id="collapse_category_'.$cur_forum['cid'].'" class="collapse_category_wrapper'.$collapsed.'" data-category-id="'.$cur_forum['cid'].'">'."\n";
+
+
+		]]></hook>
+
+        <hook id="in_end"><![CDATA[
+ echo "\t".'</div>'."\n";        
+        ]]></hook>
+
+	</hooks>
+</extension>
