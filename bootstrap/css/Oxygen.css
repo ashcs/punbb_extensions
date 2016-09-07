@@ -1,0 +1,54 @@
+html, blockquote {
+	font-size: inherit;
+}
+body {
+    font-size: 16px;
+}
+legend {
+	font-size: inherit;
+	border: inherit;
+}
+label {
+	font-weight: inherit;
+	margin: inherit;
+}
+.checkbox input[type="checkbox"] {
+	position: static;
+}
+.brd {
+	font-family: inherit;
+	line-height:  normal;
+	/*padding: 1em 0;*/
+}
+div#brd-wrap {
+	padding: 1em 0;
+}
+h1, h2, h3, h4, h5, h6 {
+    line-height: inherit;
+}
+.sf-set .text label span, .sf-set .select label span, .sf-set .aslabel span
+{
+    width: 17em;
+}
+.mf-set legend span, .sf-set .checkbox label span, .txt-set label span {
+	width: 18em;
+}
+textarea {
+    line-height: 16px;
+}
+.sceditor-button {
+	padding: 15px 12px;
+	position: relative;
+}
+.sceditor-button div {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 7px;
+    left: 4px;
+}
+
+.btn, .btn:hover  {
+	text-shadow: none !important;
+	background-image: none !important;
+}

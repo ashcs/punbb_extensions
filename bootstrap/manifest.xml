@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE extension SYSTEM "ext-1.0.dtd">
+
+<!--
+/**
+ *  
+ * @copyright (C) 2016 hcs hcs@mail.ru
+ * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+ *
+ *	Extension for PunBB (C) 2008-2012 PunBB
+ * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+ */
+-->
+
+<extension engine="1.0">
+	<id>bootstrap</id>
+	<title>Bootstrap addons</title>
+	<version>1.0.1</version>
+	<description>Adds an Bootstrap</description>
+	<author>hcs</author>
+	<minversion>1.4.4</minversion>
+	<maxtestedon>1.4.5</maxtestedon>
+
+	<hooks>
+
+
+		<hook id="es_essentials" priority="1"><![CDATA[
+$forum_loader->add_js(
+    '/extensions/bootstrap/js/bootstrap.min.js', 
+    array(
+        'type' => 'url', 
+        'weight'=> 76
+    )
+);
+
+		]]></hook>
+
+        <hook id="hd_head"><![CDATA[
+if (file_exists($ext_info['path'].'/styles/'.$forum_user['style'].'/')) {
+    $forum_loader->add_css($ext_info['url'].'/css/'.$forum_user['style'].'.css');
+} else {
+    $forum_loader->add_css($ext_info['url'].'/css/Oxygen.css');
+}
+
+$forum_loader->add_css(
+    '/extensions/bootstrap/css/bootstrap.min.css',
+    array(
+        'type' => 'url',
+        'weight'=> 1,
+        'group' => FORUM_CSS_GROUP_SYSTEM,
+    )
+);
+        ]]></hook>                    
+				
+	</hooks>
+</extension>
