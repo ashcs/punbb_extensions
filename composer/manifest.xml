@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE extension SYSTEM "ext-1.0.dtd">
+
+<!--
+/**
+ * Add composer support
+ *
+ * Composer
+ * @copyright (C) 2016 hcs hcs@mail.ru
+ * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+ *
+ * Extension for PunBB (C) 2008-2016 PunBB
+ * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+ */
+-->
+
+<extension engine="1.0">
+	<id>composer</id>
+	<title>Composer Dependency Manager for PHP </title>
+	<version>1.0.3</version>
+	<description><![CDATA[This extension allows you to use composer ]]></description>
+	<icon>https://getcomposer.org/img/logo-composer-transparent5.png</icon>
+	<author>hcs</author>
+	<minversion>1.4.4</minversion>
+	<maxtestedon>1.4.4</maxtestedon>
+
+	<install><![CDATA[
+
+require_once $ext_info['path'].'/extension_installer.php';
+$ext_info = array(
+    'path'  => FORUM_ROOT.'extensions/composer',
+    'url'   => forum_link('extensions/composer')
+);
+$ext_installer = new Extension_Installer($ext_info);
+$ext_installer->run_action('install');
+unset($_SESSION['composer_passed']);
+	]]></install>
+
+	<uninstall><![CDATA[
+require_once $ext_info['path'].'/extension_installer.php';
+$ext_info = array(
+    'path'  => FORUM_ROOT.'extensions/composer',
+    'url'   => forum_link('extensions/composer')
+);
+$ext_installer = new Extension_Installer($ext_info);
+$ext_installer->run_action('uninstall');
+unset($_SESSION['composer_passed']);	
+	]]></uninstall>
+
+	<hooks>
+	
+        <hook id="aex_install_comply_form_submitted"><![CDATA[
+
+if ($id == 'composer')
+    return;
+    
+if (file_exists(FORUM_ROOT.'extensions/'.$id.'/composer.json')) {
+    require_once $ext_info['path'].'/extension_installer.php';
+    $ext_installer = new Extension_Installer($ext_info);
+    $ext_installer->run_action('install');
+} 
+        ]]></hook>        
+	
+		<hook id="es_essentials"><![CDATA[
+require $ext_info['path'].'/vendor/autoload.php';
+require $ext_info['path'].'/bootstrap.php';
+		]]></hook>
+		
+        <hook id="aex_uninstall_comply_form_submitted"><![CDATA[
+if ($id == 'composer')
+    return;        
+        
+if (file_exists(FORUM_ROOT.'extensions/'.$id.'/composer.json') ) {        
+    require_once $ext_info['path'].'/extension_installer.php';
+    $ext_installer = new Extension_Installer($ext_info);
+    $ext_installer->run_action('uninstall');    
+}    
+        ]]></hook>		
+
+		
+	</hooks>
+</extension>

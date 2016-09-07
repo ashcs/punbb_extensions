@@ -1,0 +1,5 @@
+deny from all
+<FilesMatch "(script\.js|button\-fix\.css|main\.php)$">
+ Order Deny,Allow
+ Allow from all
+ </FilesMatch>

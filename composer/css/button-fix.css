@@ -1,0 +1,21 @@
+input[type="submit"][disabled]:hover,
+input[type="submit"][disabled]:focus,
+input[type="reset"][disabled]:hover,
+input[type="reset"][disabled]:focus,
+input[type="button"][disabled]:hover,
+input[type="button"][disabled]:focus,
+button[disabled]:hover,
+button[disabled]:focus,
+
+input[type="submit"][disabled],
+input[type="button"][disabled],
+input[type="reset"][disabled],
+button[disabled] {
+    background: none;
+    text-shadow: none;
+    box-shadow: none;
+    background-image: none;
+	 border-color: #ccc !important;
+	cursor: initial;
+}
+

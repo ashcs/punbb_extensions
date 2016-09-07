@@ -1,0 +1,12 @@
+{
+    "name": "composer-installer",
+    "require": {
+        "pimple/pimple": "~3.0.1"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packagist.org/"
+        }
+    ]
+}
