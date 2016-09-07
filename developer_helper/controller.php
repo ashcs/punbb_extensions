@@ -26,7 +26,6 @@ class Controller extends Base
 			
 	public function __construct($ext_path)
 	{
-		parent::__construct();
 		$this->path = $ext_path;
 		$this->view = $ext_path . 'view' . DIRECTORY_SEPARATOR;
 		// Reset forum_page counters
@@ -65,4 +64,49 @@ class Controller extends Base
 		}		
 	}
 	
+	protected function error($msg, $header, $type = 'warning')
+	{
+	    return array(
+	        'view' => (isset($this->view) ? $this->view.'errors' :  null),
+	        'name' => 'errors',
+	        'data' => array(
+	            'errors' => array(
+	                $msg,
+	            ),
+	            'head' => $header,
+	            'type' => $type
+	        )
+	    );
+	}
+	
+	protected function process_ajax()
+	{
+	    $result = $this->process_post();
+	    if (!empty($result['data'])) {
+	        send_json($result['data']);
+	    }
+	    else {
+	        send_json(array('code' => 0));
+	    }
+	    exit;
+	}
+	
+	protected function process_post()
+	{
+	    if (!isset($_POST['form_action']))
+	    {
+	        return;
+	    }
+	
+	    $method = 'post_'.forum_htmlencode($_POST['form_action']);
+	
+	    if (is_callable(array($this, $method)))
+	    {
+	        return $this->{$method}();
+	    }
+	    else {
+	        echo 'not is callable '. get_class($this). ' ' . $method;
+	    }
+	
+	}
 }

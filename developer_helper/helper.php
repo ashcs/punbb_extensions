@@ -21,7 +21,8 @@ class App {
 					$forum_flash,
 					$forum_loader,
 					$base_url,
-					$now;
+					$now,
+					$js_loaded = false;
 
 	private static $loaded_lang = array();
 	
@@ -59,9 +60,48 @@ class App {
         {
         	self::$is_ajax = TRUE;
         }
+        else {
+            /*
+        	self::$forum_loader->add_js(
+        		'//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js', 
+        		array(
+        			'type' => 'url', 
+        			'weight'=> 76
+        		)
+        	);
+        	self::$forum_loader->add_css(
+        	    '/extensions/developer_helper/css/bootstrap.css',
+        	    array(
+        	        'type' => 'url',
+        	        'weight'=> 1,
+        	        'group' => FORUM_CSS_GROUP_SYSTEM,
+        	    )
+        	);
+        	*/
+        }
         spl_autoload_register(array('App','auto_load'));
         self::$loaded = true;
+/*
+        self::inject_hook('hd_template_loaded', array(
+            'name' => 'developer_helper',
+            'url' => $GLOBALS['ext_info']['url'],
+            'code' => '$tpl_main = str_replace("<!-- forum_javascript -->","<div class=\"modal fade\" id=\"remote-modal-container\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\" aria-hidden=\"true\"><div class=\"modal-dialog\"><div class=\"modal-content\"></div></div></div>\n<!-- forum_javascript -->",  $tpl_main);'
+        ));
+*/        
+
     }	
+    
+    public static function js_load()
+    {
+    	if (!self::$js_loaded)
+    	{
+    		self::$forum_loader->add_js(
+    			'/extensions/developer_helper/js/btn_ajax_click.js?v12', array('type' => 'url', 'weight'=> 160)	
+    		);
+    		self::$js_loaded = true;
+    	}    	
+    }
+    
     
 	public static function add_autoload_folder($folder)
 	{
@@ -88,7 +128,7 @@ class App {
 		{
 			$path = FORUM_ROOT.'extensions/'.strtolower(preg_replace('/_('. self::$_autoload_folders .')_/i','/$1/',$class_name)).'.php';
 
-			(file_exists($path)) ? require($path) : message("class file $class_name not exist on $path");
+			(file_exists($path)) ? require($path) : null;//message("class file $class_name not exist on $path");
 		}
 	}
 	  
@@ -115,7 +155,8 @@ class App {
 			$override_path = $_GET['r'];
 		}
 			
-		$params = explode('/',preg_replace('/[^a-zA-Z0-9\-_\/]/','',$override_path));
+		//$params = explode('/',preg_replace('/[^a-zA-Z0-9\-_\/]/','',$override_path));
+		$params = explode('/',$override_path);
 		foreach ($params as $key => $cur_param)
 		{
 			if (forum_trim($cur_param) == '')
@@ -185,6 +226,7 @@ class App {
 			}
 			else 
 			{
+			    global $visit_elements,  $visit_links, $tpl_main, $gen_elements,  $main_elements, $forum_page;
 				require FORUM_ROOT.'header.php';
 				ob_start();
 				echo  View::$instance->render();
@@ -325,6 +367,7 @@ class App {
             array_unshift($forum_hooks[$hook_id],$hook);
 		else
 		    $forum_hooks[$hook_id][] = $hook;
+
 	}
 	
 	public static function paginate($total_count, $disp_count, $url, $params = null)
@@ -337,54 +380,62 @@ class App {
 		App::$forum_page['page_post']['paging'] = '<p class="paging"><span class="pages">'.App::$lang_common['Pages'].'</span> '.paginate(App::$forum_page['num_pages'], App::$forum_page['page'], $url, App::$lang_common['Paging separator'], $params).'</p>';
 	}
 	
+	
+	
+	public static function get_avatar($user) {
+		global $base_url, $forum_config;
+		switch ($user['avatar'])
+		{
+			case FORUM_AVATAR_GIF:
+				$avatar_filename = $user['id'].'.gif';
+				break;
+	
+			case FORUM_AVATAR_JPG:
+				$avatar_filename = $user['id'].'.jpg';
+				break;
+	
+			case FORUM_AVATAR_PNG:
+				$avatar_filename = $user['id'].'.png';
+				break;
+		}
+	
+		if (!isset($avatar_filename)) {
+			return $base_url .'/'. $forum_config['o_avatars_dir'] .'/default.png';
+		}
+	
+		return $base_url .'/'. $forum_config['o_avatars_dir'] .'/'.$avatar_filename;
+	}
+	
+	
+	
 	public static function send_json($params)
 	{
-		//header('Content-type: text/html; charset=utf-8');
 		header('Content-type: application/json; charset=utf-8');
-		if (!function_exists('json_encode'))
-		{
-			function json_encode($data)
-			{
-				switch ($type = gettype($data))
-				{
-				    case 'NULL':
-				    	return 'null';
-				    case 'boolean':
-				    	return ($data ? 'true' : 'false');
-				    case 'integer':
-				    case 'double':
-				    case 'float':
-				    	return $data;
-				    case 'string':
-				    	return '"' . addslashes($data) . '"';
-				    case 'object':
-				    	$data = get_object_vars($data);
-				    case 'array':
-				    	$output_index_count = 0;
-				    	$output_indexed = array();
-				    	$output_associative = array();
-				    	foreach ($data as $key => $value)
-				    	{
-				    		$output_indexed[] = json_encode($value);
-				    		$output_associative[] = json_encode($key) . ':' . json_encode($value);
-				    		if ($output_index_count !== NULL && $output_index_count++ !== $key)
-				    		{
-				    			$output_index_count = NULL;
-				    		}
-				    	}
-				    	if ($output_index_count !== NULL) {
-				    		return '[' . implode(',', $output_indexed) . ']';
-				    	} else {
-				    		return '{' . implode(',', $output_associative) . '}';
-				    	}
-				    default:
-				    	return ''; // Not supported
-				}
-			}
-		}		
 		echo json_encode($params);
-		die;
+		exit;
 	}
+	
+	public static function translate($object, $default_value)
+	{
+	    if (self::is_translated($object))
+	    {
+	        return $object['translate_value'];
+	    }
+	    else {
+	        return $default_value;
+	    }
+	}
+	
+	public static function is_translated($object)
+	{
+	    if (isset($object['translate_value']) && $object['translate_value'] !== null)
+	    {
+	        return true;
+	    }
+	    return false;
+	     
+	}
+	
 }
 	
 App::init();	

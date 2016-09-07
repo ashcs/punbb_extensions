@@ -1,16 +1,8 @@
 <?php
-abstract class Base implements SplSubject
+abstract class Base
 {
-	private	$storage;
-	private $state;
 	protected $properties = array();
 
-		
-	function __construct()
-	{
-		$this->storage = new SplObjectStorage;
-	}
-	
 	function __set($key, $value)
 	{
 		$this->properties[$key] = $value;
@@ -43,23 +35,4 @@ abstract class Base implements SplSubject
 			unset($this->properties[$key]);
 		}
 	}
-	
-	function attach(SplObserver $observer)
-	{
-		$this->storage->attach($observer);
-	}
-	
-	function detach(SplObserver $observer)
-	{
-		$this->storage->detach($observer);
-	}
-	
-	function notify()
-	{
-		foreach ($this->storage as $cur_observer)
-		{
-			$cur_observer->update($this);
-		}
-	}
-	
 }
