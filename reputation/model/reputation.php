@@ -125,7 +125,7 @@ class Reputation_Model_Reputation
 		$query = array(
 			'INSERT'	=> 'user_id, from_user_id, time, post_id, reason, topic_id, rep_'. $method,
 			'INTO'		=> 'reputation',
-			'VALUES'		=> '\''.$target['poster_id'].'\', '.$user['id'].', '.mktime().', '.$target['id'].', \''.App::$forum_db->escape($message).'\', '.$target['topic_id'].', '.$user['g_rep_weight'],
+			'VALUES'		=> '\''.$target['poster_id'].'\', '.$user['id'].', '.time().', '.$target['id'].', \''.App::$forum_db->escape($message).'\', '.$target['topic_id'].', '.$user['g_rep_weight'],
 		);	
 		$result = App::$forum_db->query_build($query) or error(__FILE__, __LINE__);		
 

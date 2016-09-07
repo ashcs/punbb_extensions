@@ -16,16 +16,16 @@
 <extension engine="1.0">
 	<id>reputation</id>
 	<title>Reputation</title>
-	<version>4.3.0</version>
+	<version>5.0.0</version>
 	<description><![CDATA[Allow users to give reputation points to other users. Users necessarily specify the reason of change of reputation and can look who it changed. Admins can delete any reputation any users.]]></description>
 	<author>hcs</author>
 	<minversion>1.4.3</minversion>
-	<maxtestedon>1.4.3</maxtestedon>
+	<maxtestedon>1.4.5</maxtestedon>
 
 	<dependencies>
 		<dependency>developer_helper</dependency>
 		<dependency>pun_jquery</dependency>
-		<dependency>nya_jquery_ui</dependency>
+		<dependency>bootstrap</dependency>
 	</dependencies>
 
 	<install><![CDATA[

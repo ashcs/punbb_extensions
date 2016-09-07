@@ -13,7 +13,7 @@
 				<th class="tc1"><?php echo App::$lang['From user'] ?></th>
 				<th class="tc3" style="width:20%"><?php echo App::$lang['For topic'] ?></th>
 				<th class="tc3"  style="width:28%"><?php echo App::$lang['Reason'] ?></th>
-				<th class="tc1" style="width:1.5em;text-align:center;">+/-</th>
+				<th class="tc1" style="width:4em;text-align:center;">+/-</th>
 				<th class="tc3" style="width:4.5em;text-align:center;"><?php echo App::$lang['Date'] ?></th>
 				<th class="tc3" style="width:4em;text-align:center;"><?php echo App::$lang['Delete'] ?></th>
 				</tr>

@@ -3,7 +3,7 @@
  * Language definitions for reputation
  * 
  * @author hcs
- * @copyright (C) 2012 hcs reputation extension for PunBB (C)
+ * @copyright (C) 2016 hcs reputation extension for PunBB (C)
  * @copyright Copyright (C) 2012 PunBB
  * @license http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  * @package reputation
@@ -13,8 +13,9 @@ return array(
 	'Reputation'		=> 'Reputation',
 	'Disabled'			=> 'Reputation System is currently disabled',
 	'Silly user'		=> 'You can\'t give your voice to yourself.',
-	'Timeout error'		=> 'Repeatedly to change the reputation of the user <strong>%s </strong> will be not less than %s minutes.',
+	'Timeout error'		=> 'Repeatedly to change the reputation of the user %s  will be not less than %s minutes.',
  	'Plus'				=> 'Add of a reputation to user %s',
+    'Description'       =>  'Please, write reason of change the reputation',
 	'Minus'				=> 'Reduction of a reputation to user %s',
 	'Form reason'		=> 'The reason of change of reputation', 
 	'Redirect Message'	=> 'The reputation has been successfully changed.',
@@ -76,4 +77,5 @@ return array(
 	'Display settings'		=>	'Display settings',
 	'Negative assessed'	=> '- ',
 	'Positive assessed'	=> '+ ',
+	'Saving...'    => 'Saving...',
 );
