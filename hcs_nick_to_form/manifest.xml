@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE extension SYSTEM "ext-1.0.dtd">
+
+
+<extension engine="1.0">
+	<id>hcs_nick_to_form</id>
+	<title>Nick to Form</title>
+	<version>0.6.6</version>
+	<description>Быстрое «обращение» к пользователю</description>
+	<author>dimka.linux@gmail.com, modified and adapted by hcs based on fancy_nick_to_form 0.5</author>
+
+	<minversion>1.4.1</minversion>
+	<maxtestedon>1.4.4</maxtestedon>
+
+	<dependencies>
+		<dependency>pun_jquery</dependency>
+	</dependencies>
+
+
+	<hooks>
+		<hook id="vt_start"><![CDATA[
+if (!isset($lang_hcs_nick_to_form)) {
+	if (file_exists($ext_info['path'].'/lang/'.$forum_user['language'].'/'.$ext_info['id'].'.php')) {
+		include_once $ext_info['path'].'/lang/'.$forum_user['language'].'/'.$ext_info['id'].'.php';
+	} else {
+		include_once $ext_info['path'].'/lang/English/'.$ext_info['id'].'.php';
+	}
+}
+$forum_loader->add_css('.posthead .post-byline a {display:inline;}', array('type' => 'inline'));  
+		]]></hook>
+
+		<hook id="vt_quickpost_pre_display"><![CDATA[
+echo '<span id="nick_to_form" style="display: none !important;" title="'.$lang_hcs_nick_to_form['title'].'"></span>';
+		]]></hook>
+
+		<hook id="vt_pre_header_load"><![CDATA[
+$forum_loader->add_js($ext_info['url'].'/js/nick_to_form.js', array('weight' => 85, 'async' => true));		
+		]]></hook>
+		
+		
+	</hooks>
+</extension>

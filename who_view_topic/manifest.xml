@@ -12,6 +12,10 @@
     <minversion>1.4.4</minversion>
     <maxtestedon>1.4.4</maxtestedon>
 
+    <dependencies>
+        <dependency>bootstrap</dependency>
+    </dependencies>
+
     <install><![CDATA[
 $forum_db->add_field('online', 'last_tid', 'INT(10)', false, 0);
 $forum_db->add_field('online', 'last_fid', 'INT(10)', false, 0);
