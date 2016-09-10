@@ -52,3 +52,14 @@ textarea {
 	text-shadow: none !important;
 	background-image: none !important;
 }
+pre {
+    line-height: inherit;
+    color: inherit;
+    background-color: inherit;
+    border: none;
+    border-radius: inherit;
+}
+
+blockquote {
+	border-left: none;
+}
