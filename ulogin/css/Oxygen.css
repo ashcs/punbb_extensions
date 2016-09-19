@@ -1,0 +1,167 @@
+.reg-social-btns {
+    display: block;
+    padding-left: 8px;
+    padding-top: 0;
+    margin: 0 auto;
+}
+
+.reg-btn {
+display: block;
+float: left;
+font-size: 12px;
+border: 1px solid #c8c8c8;
+border-radius: 2px;
+position: relative;
+width: 140px;
+margin: 4px;
+background-color: white;
+}
+
+.reg-btn a {
+    display: block;
+    color: #3b5998;
+    width: 100%;
+    line-height: 30px;
+    height: 30px;
+    border: none;
+    padding-left: 38px;
+}
+
+
+.reg-link {
+    background: url("../img/providers-32-flat.png") no-repeat;
+}
+
+.fa-webmoney {
+    background-position: 0 -581px;
+}
+.fa-vkontakte {
+    background-position: 0 -36px;
+}
+.fa-twitter {
+    background-position: 0 -173px;  
+}
+.fa-mailru {
+    background-position: 0 -104px;  
+}
+.fa-facebook {
+    background-position: 0 -140px;  
+}
+.fa-odnoklassniki {
+    background-position: 0 -71px;   
+}
+.fa-yandex {
+    background-position: 0 -241px;  
+}
+.fa-google {
+    background-position: 0 -207px;  
+}
+.fa-steam {
+    background-position: 0 -513px;  
+}
+.fa-soundcloud {
+    background-position: 0 -479px;  
+}
+.fa-lastfm {
+    background-position: 0 -377px;  
+}
+.fa-linkedin {
+    background-position: 0 -411px;  
+}
+.fa-liveid {
+    background-position: 0 -445px;  
+}
+.fa-flickr {
+    background-position: 0 -343px;  
+}
+.fa-uid {
+    background-position: 0 -547px;  
+}
+.fa-livejournal {
+    background-position: 0 -275px;  
+}
+.fa-openid {
+    background-position: 0 -309px;  
+}
+.fa-youtube {
+    background-position: 0 -615px;  
+}
+.fa-foursquare {
+    background-position: 0 -649px;  
+}
+.fa-tumblr {
+    background-position: 0 -683px;  
+}
+.fa-googleplus {
+    background-position: 0 -717px;  
+}
+.fa-vimeo {
+    background-position: 0 -751px;  
+}
+.fa-instagram {
+    background-position: 0 -785px;  
+}
+.fa-wargaming {
+    background-position: 0 -819px;  
+}
+
+a.attached, a.attached span {
+    transition:all .2s ease-in-out;
+}
+
+a.attached:hover {
+    text-decoration: none;
+}
+a.attached span {
+    opacity:0;
+    width:30px;
+    height:30px;    
+}
+
+a.attached:hover span{
+    opacity:1;
+    float:right;
+    display:inline-block;
+
+    background: url("../img/x.png") no-repeat;
+}
+#ulogin_alert_box {
+    padding: .3em 1em;
+    margin: 0 1em;
+}
+.uloginstyle {
+    padding:  6px 12px 0px 8px;
+    float:left;
+}
+
+/* overlay styles, all needed */
+.ulogin-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 10000;
+	display: none;
+	/*transition:all .2s ease-in-out;*/
+}
+
+/* just some content with arbitrary styles for explanation purposes */
+.ulogin-modal {
+    width: 300px;
+    height: 100px;
+    line-height: 100px;
+    position: fixed;
+    top: 50%; 
+    left: 50%;
+    margin-top: -40px;
+    margin-left: -150px;
+    background-color: #fff;
+    border-radius: 5px;
+    text-align: center;
+    z-index: 10001; /* 1px higher than the overlay layer */
+	display: none;
+	/*transition:all .2s ease-in-out;*/
+}
+

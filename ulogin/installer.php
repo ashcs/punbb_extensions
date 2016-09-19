@@ -1,6 +1,5 @@
 <?php
-
-namespace Ulogin;
+defined('FORUM_ROOT') or exit();
 
 class Installer {
 
@@ -67,7 +66,7 @@ class Installer {
 
     static function install()
     {
-        global $forum_db;
+        global $forum_db, $forum_config;
         
         foreach (self::$schema as $table_name => $schema)
         {
@@ -76,7 +75,9 @@ class Installer {
         
         foreach (self::$config as $key => $value)
         {
-            forum_config_add($key, $value);
+            if (!isset($forum_config[$key])) {
+                forum_config_add($key, $value);
+            }
         }
     }
 

@@ -1,5 +1,5 @@
 deny from all
-<FilesMatch "(ulogin\.js|register\.js|ulogin\.php)$">
+<FilesMatch "(ulogin\.js|register\.js|ulogin\.php|\.png|\.css)$">
  Order Deny,Allow
  Allow from all
 </FilesMatch>

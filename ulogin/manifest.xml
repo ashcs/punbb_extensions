@@ -17,53 +17,270 @@
 <extension engine="1.0">
 	<id>ulogin</id>
 	<title>Ulogin</title>
-	<version>1.0.1</version>
+	<version>2.0.0</version>
 	<description>This extension allows you to login from socials network </description>
 	<author>hcs</author>
 	<minversion>1.4.4</minversion>
 	<maxtestedon>1.4.4</maxtestedon>
 
 	<dependencies>
-		<dependency>composer</dependency>
+		<dependency>pun_jquery</dependency>
 	</dependencies>
 	
 	<install><![CDATA[
-Ulogin\Installer::install();
+require  $ext_info['path']. '/installer.php';
+Installer::install();
 	]]></install>
 
 	<uninstall><![CDATA[
-Ulogin\Installer::uninstall();
+require  $ext_info['path']. '/installer.php';
+Installer::uninstall();
 	]]></uninstall>
 
 	<hooks>
 	
+	   <hook id="hd_head"><![CDATA[
+if ($forum_user['is_guest'])
+{
+    if (file_exists($ext_info['path'].'/css/'.$forum_user['style'].'.css')) {
+        $forum_loader->add_css($ext_info['url'].'/css/'.$forum_user['style'].'.css');
+    } else {
+        $forum_loader->add_css($ext_info['url'].'/css/Oxygen.css');
+    }   
+}       
+        ]]></hook>
+        	
 		<hook id="hd_visit_elements" priority="1"><![CDATA[
-Ulogin\Hooks::hd_visit_elements($visit_elements);		
+if ($forum_user['is_guest'])
+{
+    $forum_loader->add_js('//ulogin.ru/js/ulogin.js?v1', array('weight' => 55, 'async' => false, 'group' => FORUM_JS_GROUP_SYSTEM));
+    $forum_loader->add_js($ext_info['url'].'/js/ulogin.js?v1', array('weight' => 200));
+    $visit_elements['<!-- forum_welcome -->'] .= '<div id="uLogin_'.$forum_config['o_ulogin_id'].'" class="ulogin1 uloginstyle" data-csrf_token="'.generate_form_token(forum_link('extensions/ulogin/ulogin.php')).'" data-action="'.forum_link('extensions/ulogin/ulogin.php').'" data-uloginid="'.$forum_config['o_ulogin_id'].'"></div>';
+}		
 		]]></hook>	
+		
         <hook id="rg_start"  priority="10"><![CDATA[
-Ulogin\Hooks::rg_start();       
+if (isset($_SESSION['ulogin_data']))
+{
+    if ((isset($GLOBALS['exchange_register_loaded']) && isset($_SESSION['ulogin_data']['group_is_select']) && $_SESSION['ulogin_data']['group_is_select'] == 1) || !isset($GLOBALS['exchange_register_loaded']))
+    {
+        $GLOBALS['allow_register'] = true;
+    }
+    else {
+        $GLOBALS['allow_register'] = false;
+    } 
+}
+else {
+    $GLOBALS['allow_register'] = false;
+}
+
+if (empty($GLOBALS['allow_register']) || $GLOBALS['allow_register'] === false) {
+    return;
+}        
+        
+if (isset($_SESSION['ulogin_data']) && $forum_config['o_ulogin_force_reg'] == '1' && $GLOBALS['allow_register'])
+{
+    $_POST['form_sent'] = 1;
+    if (!isset($_POST['ulogin_name']))
+    {
+        $_POST['req_username'] = $_SESSION['ulogin_data']['nickname'];
+    }
+    $_POST['req_email1'] = $_SESSION['ulogin_data']['email'];
+    $_POST['req_password1'] = $_POST['req_password2'] = random_key(8, true);
+    $GLOBALS['register_only_nickname'] = true;
+}
+define('RECAPTCHA_SKIP', 1);       
         ]]></hook>      
+        
 		<hook id="rg_register_output_start"><![CDATA[
-Ulogin\Hooks::rg_register_output_start();       
+if (isset($_SESSION['ulogin_data']))
+{
+    if (file_exists($ext_info['path']. '/lang/'.$forum_user['language'].'.php'))
+        require $ext_info['path']. '/lang/'.$forum_user['language'].'.php';
+    else
+        require $ext_info['path']. '/lang/English.php';
+                   
+    $forum_page['frm_info']['email'] = $ulogin_lang['Register required'];
+    $forum_loader->add_js($ext_info['url'].'/js/register.js', array('weight' => 200));
+    echo '<script>var ulogin_data = JSON.parse(\''.json_encode($_SESSION['ulogin_data']).'\');</script>';
+}       
         ]]></hook>  	
+        
         <hook id="exchange_register_pre_group"><![CDATA[
-Ulogin\Hooks::exchange_register_pre_group();       
-        ]]></hook>      
+if (isset($_SESSION['ulogin_data']))
+{
+    $_SESSION['ulogin_data']['group_is_select'] = 1;
+    if (file_exists($ext_info['path']. '/lang/'.$forum_user['language'].'.php'))
+        require $ext_info['path']. '/lang/'.$forum_user['language'].'.php';
+    else
+        require $ext_info['path']. '/lang/English.php';        
+        
+    $forum_page['frm_info']['email'] = $ulogin_lang['Register required']; 
+?>
+    <div class="ct-box info-box">
+        <?php echo implode("\n\t\t\t", $forum_page['frm_info'])."\n" ?>
+    </div>
+<?php
+}       
+        ]]></hook>
+        
+           
         <hook id="rg_register_pre_login_redirect"><![CDATA[
-Ulogin\Hooks::rg_register_pre_login_redirect($new_uid);       
+if (!isset($_SESSION['ulogin_data'])) {
+    return;
+}
+    
+$query = array(
+    'INSERT'    => 'user_id, email, network, identity, uid, nickname, manual, response',
+    'INTO'      => 'ulogin',
+    'VALUES'    => '\''.$new_uid.'\', \''.$forum_db->escape($_SESSION['ulogin_data']['email']).'\', \''.$forum_db->escape($_SESSION['ulogin_data']['network']).'\', \''.$forum_db->escape($_SESSION['ulogin_data']['identity']).'\', \''.$forum_db->escape($_SESSION['ulogin_data']['uid']).'\', \''.$forum_db->escape($_SESSION['ulogin_data']['nickname']).'\', \''.$forum_db->escape($_SESSION['ulogin_data']['manual']).'\', \''.$forum_db->escape(serialize($_SESSION['ulogin_data'])).'\''
+);
+            
+$forum_db->query_build($query) or error(__FILE__, __LINE__);
+        
+unset($_SESSION['ulogin_data']);     
         ]]></hook>
+        
+        <hook id="rg_register_pre_email"><![CDATA[
+if (isset($GLOBALS['register_only_nickname'])) {
+    echo '<input type="hidden" name="ulogin_name" value="1" />';        
+    $tpl_temp = forum_trim(ob_get_contents());
+    $tpl_main = str_replace('<!-- forum_main -->', $tpl_temp.'<!-- forum_main -->', $tpl_main);
+    ob_end_clean();    
+    ob_start();      
+}
+        ]]></hook>        
+        
+        <hook id="rg_register_pre_password"><![CDATA[
+if (isset($GLOBALS['register_only_nickname'])) {        
+    $tpl_temp = forum_trim(ob_get_contents());
+    $tpl_main = str_replace('<!-- forum_main -->', $tpl_temp.'<!-- forum_main -->', $tpl_main);
+    ob_end_clean();    
+    ob_start();      
+}
+        ]]></hook>        
+        
+        <hook id="rg_register_pre_username,rg_register_pre_group_end"><![CDATA[
+if (isset($GLOBALS['register_only_nickname'])) {        
+    //$tpl_temp = ob_get_contents();
+    //$tpl_main = str_replace('<!-- forum_main -->', '<!-- forum_main -->', $tpl_main);
+    ob_end_clean();
+    ob_start();          
+}
+        ]]></hook>
+
+        <hook id="pf_change_details_identity_pre_header_load"><![CDATA[
+if (file_exists($ext_info['path'].'/css/'.$forum_user['style'].'.css')) {
+    $forum_loader->add_css($ext_info['url'].'/css/'.$forum_user['style'].'.css');
+} else {
+    $forum_loader->add_css($ext_info['url'].'/css/Oxygen.css');
+}        
+        ]]></hook>
+
+        <hook id="pf_change_details_identity_pre_facebook"><![CDATA[
+if ($forum_page['own_profile']) {        
+    $tpl_temp = forum_trim(ob_get_contents());
+    $tpl_main = str_replace('<!-- forum_main -->', $tpl_temp.'<!-- forum_main -->', $tpl_main);
+    ob_end_clean();    
+    ob_start();      
+}
+        ]]></hook>
+        
+        
+        <hook id="pf_change_details_identity_pre_contact_fieldset_end"><![CDATA[
+if ($forum_page['own_profile']) {        
+    ob_end_clean();
+    ob_start();
+    require $ext_info['path'].'/profile.php';
+}        
+        ]]></hook>
+        
         <hook id="fn_delete_user_end"><![CDATA[
-Ulogin\Hooks::fn_delete_user_end($user_id);
-        ]]></hook>   
+$query = array(
+    'DELETE'    => 'ulogin',
+    'WHERE'     => 'user_id='.$user_id
+);
+        
+($hook = get_hook('fn_delete_user_qr_delete_ulogin')) ? eval($hook) : null;
+$forum_db->query_build($query) or error(__FILE__, __LINE__);        
+        ]]></hook>
+           
         <hook id="li_login_output_start"><![CDATA[
-Ulogin\Hooks::li_login_output_start();        
+if (isset($_SESSION['ulogin_data']) && empty($errors))
+{
+    $lang_login['Login errors'] = $ulogin_lang['Confirm required'];
+    $errors[] = sprintf($ulogin_lang['Confirm auth info'], $_SESSION['ulogin_data']['network'], $_SESSION['ulogin_data']['email']);
+}      
         ]]></hook>
+        
         <hook id="li_login_pre_redirect"><![CDATA[
-Ulogin\Hooks::li_login_pre_redirect();        
+if (isset($_SESSION['ulogin_data']))
+{
+    $query = array(
+        'INSERT'    => 'user_id, email, network, identity, uid, nickname, manual, response',
+        'INTO'      => 'ulogin',
+        'VALUES'    => '\''.$user_id.'\', \''.$forum_db->escape($_SESSION['ulogin_data']['email']).'\', \''.$forum_db->escape($_SESSION['ulogin_data']['network']).'\', \''.$forum_db->escape($_SESSION['ulogin_data']['identity']).'\', \''.$forum_db->escape($_SESSION['ulogin_data']['uid']).'\', \''.$forum_db->escape($_SESSION['ulogin_data']['nickname']).'\', \''.$forum_db->escape($_SESSION['ulogin_data']['manual']).'\', \''.$forum_db->escape(serialize($_SESSION['ulogin_data'])).'\''
+    );
+            
+    $forum_db->query_build($query) or error(__FILE__, __LINE__);     
+    unset($_SESSION['ulogin_data']);
+}        
         ]]></hook>
+        
+        <hook id="li_login_group_end"><![CDATA[
+if (isset($_SESSION['ulogin_data']))
+{
+    $tpl_temp = forum_trim(ob_get_contents());
+    $tpl_main = str_replace('<!-- forum_main -->', $tpl_temp.'<!-- forum_main -->', $tpl_main);
+    ob_end_clean();        
+}        
+        ]]></hook>   
+          
+        <hook id="li_end"><![CDATA[
+if (isset($_SESSION['ulogin_data']))
+{
+    $tpl_temp = forum_trim(ob_get_contents());
+    $replace = '</span><span class="submit"><input type="submit" name="login_cancel" value="'. $lang_common['Cancel']. '" /></span>';
+    $tpl_temp = str_replace('</span>', $replace, $tpl_temp);
+    $tpl_main = str_replace('<!-- forum_main -->', $tpl_temp.'<!-- forum_main -->', $tpl_main);
+    ob_end_clean();
+}         
+        ]]></hook>
+                     
+        <hook id="li_login_form_submitted"><![CDATA[
+if (isset($_POST['login_cancel']))
+{
+    unset($_SESSION['ulogin_data']);
+    redirect(forum_link($forum_url['index']), $ulogin_lang['Login cancel']);
+}        
+        ]]></hook>
+        
+        <hook id="li_start"><![CDATA[
+if (file_exists($ext_info['path']. '/lang/'.$forum_user['language'].'.php'))
+    require $ext_info['path']. '/lang/'.$forum_user['language'].'.php';
+else
+    require $ext_info['path']. '/lang/English.php';
+        
+        ]]></hook>           
         <hook id="aop_features_gzip_fieldset_end"><![CDATA[
-Ulogin\Hooks::aop_features_gzip_fieldset_end();
-        ]]></hook>       
+if (file_exists($ext_info['path']. '/lang/'.$forum_user['language'].'.php'))
+    require $ext_info['path']. '/lang/'.$forum_user['language'].'.php';
+else
+    require $ext_info['path']. '/lang/English.php';
+                
+$forum_page['group_count'] = $forum_page['item_count'] = 0;
+require $ext_info['path']. '/aop_features_gzip_fieldset_end.php';
+
+        ]]></hook>   
+
+        <hook id="co_common"><![CDATA[
+if (isset($_SESSION['ulogin_data']) && $_SERVER['PHP_SELF'] != '/register.php' && $_SERVER['PHP_SELF'] != '/login.php'  )
+{
+    unset($_SESSION['ulogin_data']);
+}
+        ]]></hook>   
+
+
         <hook id="aop_features_validation"><![CDATA[
 if (!isset($form['ulogin_force_reg']) || $form['ulogin_force_reg'] != '1') $form['ulogin_force_reg'] = '0';
         ]]></hook>        

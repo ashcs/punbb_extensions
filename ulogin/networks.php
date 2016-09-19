@@ -1,0 +1,28 @@
+<?php
+
+return array (
+    'vkontakte'	=>	'ВКонтакте',
+    'twitter'	=>	'Twitter',
+    'mailru'	=>	'Mail.ru',
+    'facebook'	=>	'Facebook',
+    'odnoklassniki'	=>	'Одноклассники',
+    'yandex'	=>	'Яндекс',
+    'google'	=>	'Google',
+    'steam'	=>	'Steam',
+    'soundcloud'	=>	'Soundcloud',
+    'lastfm'	=>	'Last.FM',
+    'linkedin'	=>	'LinkedIn',
+    'liveid'	=>	'Live ID',
+    'flickr'	=>	'Flickr',
+    'uid'	=>	'uID',
+    'livejournal'	=>	'Живой журнал',
+    'openid'	=>	'Open ID',
+    'webmoney'	=>	'Webmoney',
+    'youtube'	=>	'Youtube',
+    'foursquare'	=>	'foursquare',
+    'tumblr'	=>	'tumblr',
+    'googleplus'	=>	'Google+',
+    'vimeo'	=>	'Vimeo',
+    'instagram'	=>	'Instagram',
+    'wargaming'	=>	'Wargaming.net',
+);

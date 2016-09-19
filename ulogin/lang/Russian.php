@@ -19,4 +19,10 @@ $ulogin_lang = array (
     'Register required'     => '<p class="warn">Вы прошли авторизацию, но у нас вы еще не зарегистрированы. Для продолжения надо пройти процедуру регистрации</p>',
     'Ulogin force register label'   => 'Быстрая регистрация',
     'Ulogin force register desc'    => 'Пропустить стандартную процедуру регистрации',
+    'Login cancel'          => 'Login cancel',
+    'Available networks'    => 'Доступные сети',
+    'Attached networks'     => 'Attached networks',
+    'Network already attached'  => 'Network <strong>%s</strong> already attached another user',
+    'Network attachet to user'  => 'Network attachet to user',
+    'Network deleted from user' => 'Network deleted from user',
 );
