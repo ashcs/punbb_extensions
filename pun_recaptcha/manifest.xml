@@ -33,7 +33,7 @@ $forum_loader->add_js('https://www.google.com/recaptcha/api.js');
         ]]></hook>
     
         <hook id="rg_register_pre_group_end, li_login_pre_group_end,li_forgot_pass_pre_group_end,pf_change_pass_key_pre_fieldset_end,pf_change_pass_normal_pre_fieldset_end"><![CDATA[
-if ($forum_config['recaptcha_publickey'] && $forum_config['recaptcha_privatekey']) {
+if ($forum_config['recaptcha_publickey'] && $forum_config['recaptcha_privatekey'] && !defined('RECAPTCHA_SKIP')) {
 ?>
 <div class="ct-set set<?php echo ++$forum_page['item_count'] ?>">
     <div class="ct-box">
@@ -45,7 +45,7 @@ if ($forum_config['recaptcha_publickey'] && $forum_config['recaptcha_privatekey'
         ]]></hook>
 
         <hook id="rg_register_form_submitted, li_login_form_submitted, li_forgot_pass_end_validation,pf_change_pass_key_form_submitted,pf_change_pass_normal_form_submitted"><![CDATA[
-if ($forum_config['recaptcha_publickey'] && $forum_config['recaptcha_privatekey'])
+if ($forum_config['recaptcha_publickey'] && $forum_config['recaptcha_privatekey'] && !defined('RECAPTCHA_SKIP'))
 {
     if (!isset($_POST['g-recaptcha-response'])) {
         message($lang_common['Bad request']);
