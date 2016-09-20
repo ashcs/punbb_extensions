@@ -17,7 +17,7 @@
 <extension engine="1.0">
 	<id>ulogin</id>
 	<title>Ulogin</title>
-	<version>2.0.0</version>
+	<version>2.0.1</version>
 	<description>This extension allows you to login from socials network </description>
 	<author>hcs</author>
 	<minversion>1.4.4</minversion>
@@ -54,7 +54,7 @@ if ($forum_user['is_guest'])
 if ($forum_user['is_guest'])
 {
     $forum_loader->add_js('//ulogin.ru/js/ulogin.js?v1', array('weight' => 55, 'async' => false, 'group' => FORUM_JS_GROUP_SYSTEM));
-    $forum_loader->add_js($ext_info['url'].'/js/ulogin.js?v1', array('weight' => 200));
+    $forum_loader->add_js($ext_info['url'].'/js/ulogin.js?v2', array('weight' => 200));
     $visit_elements['<!-- forum_welcome -->'] .= '<div id="uLogin_'.$forum_config['o_ulogin_id'].'" class="ulogin1 uloginstyle" data-csrf_token="'.generate_form_token(forum_link('extensions/ulogin/ulogin.php')).'" data-action="'.forum_link('extensions/ulogin/ulogin.php').'" data-uloginid="'.$forum_config['o_ulogin_id'].'"></div>';
 }		
 		]]></hook>	

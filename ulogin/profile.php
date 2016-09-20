@@ -7,7 +7,7 @@ else
     require $ext_info['path'].'/lang/English.php';
 
 $forum_loader->add_js('//ulogin.ru/js/ulogin.js?v1', array('weight' => 55, 'async' => false, 'group' => FORUM_JS_GROUP_SYSTEM));
-$forum_loader->add_js($ext_info['url'].'/js/ulogin.js?v1', array('weight' => 200));
+$forum_loader->add_js($ext_info['url'].'/js/ulogin.js?v2', array('weight' => 200));
 
 
 $networks = require('networks.php');

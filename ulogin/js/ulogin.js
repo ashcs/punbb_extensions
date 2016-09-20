@@ -52,7 +52,7 @@ function process_response(res, area) {
 $(document).ready(function(){
 	$('.reg-link.attached').click(function(){
 		alertbox.remove();
-		$.post($('.ulogin1').data('action'), {'delete': $(this).data('deletenetwork'), 'csrf_token' : $('.ulogin1').data('csrf_token') }, function(reselt, status){ 
+		$.post($('.ulogin1').data('action'), {'delete': $(this).data('deletenetwork'), 'csrf_token' : $('.ulogin1').data('csrf_token') }, function(result, status){ 
 			if(status == 'error'){
 				alert("Error! Please try again later!");
 			}else{

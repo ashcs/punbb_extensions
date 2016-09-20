@@ -70,6 +70,14 @@ else
         
 $ulogin_data = json_decode($result, true);
 
+if (!isset($ulogin_data['nickname'])) {
+    $ulogin_data['nickname'] = '';
+}
+
+if (!isset($ulogin_data['manual'])) {
+    $ulogin_data['manual'] = '';
+}
+
 /*
  * Если пользователь не гость на форуме, то либо добавляем авторизующую сеть пользователю
  * Либо отказываем
