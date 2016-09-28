@@ -100,20 +100,30 @@ $('#filer_input').filer({
         enctype: 'multipart/form-data',
         beforeSend: function(){},
         success: function(data, el,l, p, o, s, cid){
-            var parent = el.find(".jFiler-jProgressBar").parent();
-            var filerKit = $("#filer_input").prop("jFiler");
+        	if (data.result == 0) {
+        		var parent = el.find(".jFiler-jProgressBar").parent();
+        		var filerKit = $("#filer_input").prop("jFiler");
             
-            filerKit.files_list[cid].file.token = data.token;
-            filerKit.files_list[cid].file.id = data.file_id;
-            filerKit.files_list[cid].file.url = data.url;
-            filerKit.files_list[cid].file.thumbnail= data.thumbnail;
+        		filerKit.files_list[cid].file.token = data.token;
+        		filerKit.files_list[cid].file.id = data.file_id;
+        		filerKit.files_list[cid].file.url = data.url;
+        		filerKit.files_list[cid].file.thumbnail= data.thumbnail;
             
-            el.find(".jFiler-jProgressBar").fadeOut("slow", function(){
-                $("<div class=\"jFiler-item-others text-success\"><i class=\"icon-jfi-check-circle\"></i> Success</div>").hide().appendTo(parent).fadeIn("slow");    
-            });
+        		el.find(".jFiler-jProgressBar").fadeOut("slow", function(){
+        			$("<div class=\"jFiler-item-others text-success\"><i class=\"icon-jfi-check-circle\"></i> Success</div>").hide().appendTo(parent).fadeIn("slow");    
+        		});
             
-            PUNBB.uploader.click_handler(el.find('.jFiler-item-test-action'), cid);
+        		PUNBB.uploader.click_handler(el.find('.jFiler-item-test-action'), cid);
             
+        		el.find('.jFiler-item-test-action').click();
+        	}
+        	if (data.result == -1) {
+                var parent = el.find(".jFiler-jProgressBar").parent();
+                el.find(".jFiler-jProgressBar").fadeOut("slow", function(){
+                    $("<div class=\"jFiler-item-others text-error\"><i class=\"icon-jfi-minus-circle\"></i> Error! <span>"+data.error+"</span></div>").hide().appendTo(parent).fadeIn("slow");    
+                });
+                el.find('.jFiler-item-assets').hide();
+        	}
         },
         error: function(el){
             var parent = el.find(".jFiler-jProgressBar").parent();
@@ -126,7 +136,8 @@ $('#filer_input').filer({
         onComplete: null
     },
     onSelect: function(){
-    	$.modal.close();
+    	if ($.modal != 'undefined' && $.modal)
+    		$.modal.close();
     },
     onRemove: function(itemEl, file, id, listEl, boxEl, newInputEl, inputEl){
     	$.post(file.url,{csrf_token: file.token}, function(result, text){ },"json").error(function() { alert("Error! Please try again later!");  }).always(function(){})	    	
@@ -156,18 +167,18 @@ $(document).ready(function() {
     		return;
     	}
     	$(e).click(function(){
-    		if (PUNBB.pun_bbcode) {
+    		if (PUNBB.env.sceditor){
+    			$("textarea[name=req_message]").sceditor('instance').wysiwygEditorInsertHtml('<img src="'+file.thumbnail+'" />');
+    		}
+    		else if (PUNBB.pun_bbcode) {
     			PUNBB.pun_bbcode.insert_text('[img]' +  file.thumbnail,'[/img]');
     			var msgfield = (document.all) ? document.all.req_message : ((document.getElementById('afocus') !== null) ? (document.getElementById('afocus').req_message) : (document.getElementsByName('req_message')[0]));
     			if (msgfield.selectionStart) {
     				msgfield.selectionStart = msgfield.selectionStart + 6;
     			}
     		}
-    		if (PUNBB.env.sceditor){
-    			$("textarea[name=req_message]").sceditor('instance').wysiwygEditorInsertHtml('<img src="'+file.thumbnail+'" />');
-    		}
     	});
-    	$(e).click();
+    	//$(e).click();
 	}
 	
 	$('.jFiler-item-test-action').each(function(){

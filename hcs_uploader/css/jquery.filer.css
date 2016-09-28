@@ -460,3 +460,35 @@ span.jFiler-icon-file.f-audio:after {
 .jFiler-item-thumb-image img {
 	height:38px;
 }
+
+.ct-box .jFiler-input-dragDrop {
+	margin:0 0 0 0 !important;
+}
+
+.ct-box .attach {
+	display:block !important;
+}
+
+.ct-box #uploader_preview_box, .ct-box .jFiler-items, .ct-box #uploader_preview_container {
+	padding: 0 0 0 0 !important;
+}
+
+.ct-box .jFiler-item {
+	padding: 0 16px;
+}
+
+.ct-box .jFiler-item-others, .ct-box .jFiler-item-icon {
+	padding: 0 0;
+}
+
+#uploader_preview_box {
+    padding: 0 0 0 1em;
+}
+
+.jFiler-item-status i {
+	margin-left: 4px;
+}
+
+.jFiler-item-status {
+	display:block;
+}

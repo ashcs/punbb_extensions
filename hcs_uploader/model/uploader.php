@@ -37,8 +37,14 @@ class Hcs_uploader_Model_Uploader extends Base
             );
         
             $inline = '$("#pun_bbcode_button_upload_image").click(function(){$(".form-group.attach").modal({fadeDuration: 100, modalClass:"modal2"});});';
-            App::$forum_loader->add_js($inline,  array('type' => 'inline'));
+            App::$forum_loader->add_js($inline,  array('type' => 'inline', 'weight'=> 300));
         }        
+    }
+    
+    public static function load_inline() 
+    {
+        App::$forum_loader->add_css($GLOBALS['ext_info']['url'].'/css/jquery.filer.css', array('type' => 'url', 'weight'=> 160));
+        App::$forum_loader->add_css($GLOBALS['ext_info']['url'].'/css/themes/jquery.filer-dragdropbox-theme.css', array('type' => 'url', 'weight'=> 170));
     }
     
     public static function get_form($resource_name = '', $resource_id = 0)
@@ -48,11 +54,14 @@ class Hcs_uploader_Model_Uploader extends Base
             'weight' => 160
         ));
         
-        App::$forum_loader->add_js($GLOBALS['ext_info']['url'] . '/js/filer.uploader.js', array(
-            'type' => 'url',
-            'weight' => 180,
-            //'defer' => true
-        ));
+        if ($resource_name != '' && file_exists($GLOBALS['ext_info']['path']. '/js/'.$resource_name.'.uploader.js')) {
+            $uploader = $GLOBALS['ext_info']['url'] . '/js/'.$resource_name.'.uploader.js';
+        }
+        else {
+            $uploader = $GLOBALS['ext_info']['url'] . '/js/filer.uploader.js';
+        }
+        
+        App::$forum_loader->add_js($uploader, array('type' => 'url','weight' => 280,));
 
         App::$forum_loader->add_js('PUNBB.uploader = {}', array('type' => 'inline', 'weight'=> 0));
         
@@ -66,7 +75,7 @@ class Hcs_uploader_Model_Uploader extends Base
         
         return View::$instance->render();
     }
-
+    
     public static function files_upload()
     {}
 

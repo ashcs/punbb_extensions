@@ -17,7 +17,7 @@
 <extension engine="1.0">
 	<id>hcs_uploader</id>
 	<title>Uploader</title>
-	<version>1.0.8</version>
+	<version>1.1.0</version>
 	<description><![CDATA[This extension allows you to upload files with ajax drag&drop form]]></description>
 	<author>hcs, MrX</author>
 	<minversion>1.4.4</minversion>
@@ -145,6 +145,49 @@ global $cur_post, $forum_config;
 if (isset($cur_post['id']) && stripos($url,forum_link($forum_config['uploader_basefolder']))!==false){
     $img_tag = str_replace(array('<span class="postimg">','</span>',' alt="'.forum_htmlencode($alt).'"'), array('<span class="postimg"><a href="'.str_replace('thumbnail/','',$url).'" data-lightbox="post-'.$cur_post['id'].'">','</a></span>', ''),$img_tag);
 }
+        ]]></hook>
+
+
+        <hook id="pf_change_details_avatar_pre_avatar_upload"><![CDATA[
+$tpl_temp = forum_trim(ob_get_contents());
+$tpl_main = str_replace('<!-- forum_main -->', $tpl_temp.'<!-- forum_main -->', $tpl_main);
+ob_end_clean();    
+ob_start();           
+        ]]></hook>
+        
+        <hook id="pf_change_details_avatar_pre_fieldset_end"><![CDATA[
+ob_end_clean();
+ob_start();
+App::$forum_config['uploader_max_upload_once'] = 1;
+App::$forum_config['uploader_extensions_allow'] = 'jpg,gif,png';        
+?>
+                <div class="ct-set set<?php echo ++$forum_page['item_count'] ?>">
+                    <div class="ct-box">
+                        <h3 class="hn ct-legend"><?php echo $lang_profile['Upload avatar file'] ?></h3>
+<?php print Hcs_uploader_Model_Uploader::get_form('avatar'); ?>
+<div id="uploader_preview_container" class="sf-set">
+<div id="uploader_preview_box" class="sf-box jFiler jFiler-theme-default"> </div>
+</div>
+                    </div>
+                </div>        
+<?php        
+     
+        ]]></hook>
+        
+        <hook id="pf_change_details_avatar_fieldset_end"><![CDATA[
+$tpl_temp = forum_trim(ob_get_contents());
+$tpl_main = str_replace('<!-- forum_main -->', $tpl_temp.'<!-- forum_main -->', $tpl_main);
+ob_end_clean();    
+ob_start();         
+        ]]></hook>       
+
+        <hook id="pf_change_details_avatar_end"><![CDATA[
+ob_end_clean();
+ob_start();
+?>
+        </form>
+    </div>
+<?php
         ]]></hook>
 
 	</hooks>

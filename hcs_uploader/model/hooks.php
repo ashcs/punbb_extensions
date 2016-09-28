@@ -28,8 +28,13 @@ class Hcs_uploader_Model_Hooks extends Base {
     
     public static function hd_head()
     {
-        if (defined('FORUM_PAGE') && (FORUM_PAGE == 'viewtopic' || FORUM_PAGE == 'post' || FORUM_PAGE == 'postedit')) {
-            Hcs_uploader_Model_Uploader::load_modal();
+        if (defined('FORUM_PAGE')) {
+            if (FORUM_PAGE == 'viewtopic' || FORUM_PAGE == 'post' || FORUM_PAGE == 'postedit') {
+                Hcs_uploader_Model_Uploader::load_modal();
+            }
+            if (FORUM_PAGE == 'profile-avatar') {
+                Hcs_uploader_Model_Uploader::load_inline();
+            }
         }
     }
     
@@ -74,7 +79,7 @@ class Hcs_uploader_Model_Hooks extends Base {
     
     public static function vt_quickpost_pre_fieldset()
     {
-        View::$instance = View::factory(FORUM_ROOT.'extensions/hcs_uploader/view/upload_button', array());
-        echo  View::$instance->render();
+        //View::$instance = View::factory(FORUM_ROOT.'extensions/hcs_uploader/view/upload_button', array());
+        //echo  View::$instance->render();
     }
 }
