@@ -73,7 +73,7 @@
 		<hook id="ft_js_include" priority="5"><![CDATA[
 			if (isset($forum_loader) && ((FORUM_PAGE == 'viewtopic' && $forum_config['o_quickpost']) || in_array(FORUM_PAGE, array('post', 'postedit'))))
 			{
-				$forum_loader->add_js($ext_info['url'].'/js/jquery.sceditor.bbcode.min.js');
+				$forum_loader->add_js($ext_info['url'].'/js/jquery.sceditor.bbcode.min.js',array('type' => 'url', 'weight'=> 90));
 
 				$sceditor_langs = array(
 						'Arabic'              => 'ar',
@@ -190,7 +190,7 @@
 			if($forum_config['o_sc_wysiwyg_youtube'])
 			{
 				$pattern[] = '#\[youtube\]([a-zA-Z0-9_\-]+)\[/youtube\]#ms';
-				$replace[] = '<iframe width=\"560\" height=\"315\" src=\"http://www.youtube.com/embed/$matches[1]\" frameborder=\"0\" allowfullscreen></iframe>';
+				$replace[] = '<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/$matches[1]\" frameborder=\"0\" allowfullscreen></iframe>';
 			}
 			
 		]]></hook>
