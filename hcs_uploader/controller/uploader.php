@@ -245,7 +245,7 @@ class Hcs_uploader_Controller_Uploader extends Controller
                 exit;
             }
         
-            $orig_name = $metas[$key]['old_name'] . '.' . $metas[$key]['extension'];
+            $orig_name = $metas[$key]['old_name'];// . '.' . $metas[$key]['extension'];
             $ar = explode('/', $files[$key]);
         
             $mime = '';

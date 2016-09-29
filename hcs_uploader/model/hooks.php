@@ -38,22 +38,20 @@ class Hcs_uploader_Model_Hooks extends Base {
         }
     }
     
-    public static function vt_quickpost_pre_fieldset_end($id = 0) 
+    public static function vt_quickpost_pre_fieldset_end($id = 0, $user_id = 0) 
     {
         $files = array();
 
-        $query = array(
-            'SELECT' => '*',
-            'FROM' => 'upload_files',
-            'ORDER BY' => 'id'
-        );        
+        if ($user_id == 0) {
+            $user_id = App::$forum_user['id'];
+        }
         
-        if ($id == 0) {
-            $query['WHERE'] = 'user_id = \''.App::$forum_user['id'].'\' AND resource_name = \'post\' AND resource_id = \'' . 0 . '\'';
-        }
-        else {
-            $query['WHERE'] = 'resource_name = \'post\' AND (resource_id = \'' . $id . '\' OR resource_id = \'' . 0 . '\')';
-        }
+        $query = array(
+            'SELECT'    => '*',
+            'FROM'      => 'upload_files',
+            'WHERE'     => 'user_id = \''.$user_id.'\' AND resource_name = \'post\' AND resource_id = \'' . $id . '\'',
+            'ORDER BY'  => 'id'
+        );        
         
         $query_result = App::$forum_db->query_build($query) or error(__FILE__, __LINE__);
         

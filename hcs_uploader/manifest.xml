@@ -17,7 +17,7 @@
 <extension engine="1.0">
 	<id>hcs_uploader</id>
 	<title>Uploader</title>
-	<version>1.1.0</version>
+	<version>1.1.1</version>
 	<description><![CDATA[This extension allows you to upload files with ajax drag&drop form]]></description>
 	<author>hcs, MrX</author>
 	<minversion>1.4.4</minversion>
@@ -123,7 +123,7 @@ print Hcs_uploader_Model_Uploader::get_form('post');
 
 
         <hook id="ed_pre_checkbox_display"><![CDATA[
-Hcs_uploader_Model_Hooks::vt_quickpost_pre_fieldset_end($id);
+Hcs_uploader_Model_Hooks::vt_quickpost_pre_fieldset_end($id, $cur_post['poster_id']);
 print Hcs_uploader_Model_Uploader::get_form('post');     
         ]]></hook>
 
