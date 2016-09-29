@@ -89,6 +89,7 @@ class Hcs_uploader_Controller_Admin_Files extends Controller
 			);
 			App::$forum_db->query_build($query) or error(__FILE__, __LINE__);
 			@unlink( FORUM_ROOT.$file['file_path'].$file['name'] );
+			@unlink( FORUM_ROOT.$file['file_path'].App::$forum_config['uploader_thumbnail_path'].$file['name'] );
         	}
 	}
         redirect(forum_link(App::$forum_url['uploader_admin_alone']), App::$lang['uploader bla-bla-bal']);

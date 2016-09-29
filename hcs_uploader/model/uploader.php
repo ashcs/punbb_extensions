@@ -68,7 +68,7 @@ class Hcs_uploader_Model_Uploader extends Base
         View::$instance = View::factory(FORUM_ROOT . 'extensions/hcs_uploader/view/upload_form', array(
             'upload_token' => generate_form_token(forum_link(App::$forum_url['uploader_file_upload'])),
             'upload_url' => forum_link(App::$forum_url['uploader_file_upload']),
-            'remove_url' => forum_link(App::$forum_url['uploader_file_remove']),
+            //'remove_url' => forum_link(App::$forum_url['uploader_file_remove']),
             'resource_name'    => $resource_name,
             //'resource_id'   => $resource_id
         ));

@@ -457,6 +457,11 @@ span.jFiler-icon-file.f-audio:after {
 	padding:12px;
 }
 
+.jFiler-item-thumb-image {
+	height:38px;
+	width:38px
+}
+
 .jFiler-item-thumb-image img {
 	height:38px;
 }

@@ -114,7 +114,7 @@ $('#filer_input').filer({
         		});
             
         		PUNBB.uploader.click_handler(el.find('.jFiler-item-test-action'), cid);
-            
+        		
         		el.find('.jFiler-item-test-action').click();
         	}
         	if (data.result == -1) {

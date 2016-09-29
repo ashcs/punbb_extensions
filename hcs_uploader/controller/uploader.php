@@ -83,36 +83,48 @@ class Hcs_uploader_Controller_Uploader extends Controller
     
     public function delete()
     {
-        if (isset($_POST['csrf_token']) && isset($this->id)) {
-            $query = array(
-                'DELETE' => 'upload_files',
-                'WHERE' => 'id = \'' . App::$forum_db->escape($this->id) . '\' AND user_id = \'' . App::$forum_user['id'].'\''
-            );
-            App::$forum_db->query_build($query) or error(__FILE__, __LINE__);        
+        if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== generate_form_token(get_current_url())) {
+            csrf_confirm_form();
+            exit;
         }
+        
+        if (!isset($this->id)) {
+            message(App::$lang_common['Bad request']);
+            exit;
+        }
+        
+        $query = array(
+            'SELECT' => '*',
+            'FROM' => 'upload_files',
+            'WHERE' => 'id = \'' . App::$forum_db->escape($this->id) . '\''
+        );
+        
+        $result = App::$forum_db->query_build($query) or error(__FILE__, __LINE__);
+
+        if (NULL != ($file = App::$forum_db->fetch_assoc($result))) {
+            if ($file['user_id'] == App::$forum_user['id'] || App::$forum_user['g_id'] == FORUM_ADMIN) {
+                $query = array(
+                    'DELETE' => 'upload_files',
+                    'WHERE' => 'id = \'' . App::$forum_db->escape($this->id) . '\''
+                );
+                App::$forum_db->query_build($query) or error(__FILE__, __LINE__);
+
+                unlink( FORUM_ROOT.$file['file_path'].$file['name'] );
+                if (in_array($file['name'], self::$thumbnail_mime)) {
+                    unlink( FORUM_ROOT.$file['file_path'].App::$forum_config['uploader_thumbnail_path'].$file['name'] );
+                }
+                
+                header('Content-type: application/json; charset=utf-8');
+                echo json_encode(array('status' => 0, 'message' => 'file deleted'));
+                exit;                
+            }
+        }       
+      
         header('Content-type: application/json; charset=utf-8');
-        echo json_encode(array('status' => 0));
+        echo json_encode(array('status' => 0, 'message' => 'file not found'));
         exit;
     }
     
-    public function remove()
-    {
-        $file_name = $_GET['file'];
-        if ($file_name) {
-            $file = $this->file_info($file_name);
-            
-            $attach_query = array(
-                'DELETE' => 'upload_files',
-                'WHERE' => 'orig_name = \'' . App::$forum_db->escape($file_name) . '\' AND resource_name =\'\' AND resource_id = 0'
-            );
-            App::$forum_db->query_build($attach_query) or error(__FILE__, __LINE__);
-            @unlink($file['file_path'] . $file['name']);
-            
-            if (in_array($file['mime'], self::$thumbnail_mime))
-                @unlink($file['file_path'] . App::$forum_config['uploader_thumbnail_path'] . $file['name']);
-        }
-    }
-
     public static function file_info($orig_name = '')
     {
         $query = array(

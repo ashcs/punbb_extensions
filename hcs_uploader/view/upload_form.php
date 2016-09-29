@@ -5,7 +5,6 @@
 		data-jfiler-extensions="<?php echo App::$forum_config['uploader_extensions_allow'] ?>"
 		data-jfiler-limit="<?php echo App::$forum_config['uploader_max_upload_once'] ?>"
 		data-jfiler-maxSize="<?php echo App::$forum_config['uploader_max_file_size'] ?>"
-		data-jfiler-removeUrl="<?php echo $remove_url ?>" 
 		data-jfiler-uploadUrl="<?php echo $upload_url ?>" 
 		data-jfiler-uploadData='{"csrf_token": "<?php echo $upload_token ?>", "form_sent": 1, "resource_name": "<?= $resource_name ?>"}' >
 </div>
