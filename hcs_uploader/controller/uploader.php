@@ -150,7 +150,7 @@ class Hcs_uploader_Controller_Uploader extends Controller
                 20
             ), // New file name {null, String, Array} *please read documentation in README.md
             'removeFiles' => true, // Enable file exclusion {Boolean(extra for jQuery.filer), String($_POST field name containing json data with file names)}
-            'perms' => 660, // Uploaded file permisions {null, Number}
+            'perms' => null, // Uploaded file permisions {null, Number}
             'onCheck' => null, // A callback function name to be called by checking a file for errors (must return an array) | ($file) | Callback
             'onError' => array($this, 'onDefaultError'), // A callback function name to be called if an error occured (must return an array) | ($errors, $file) | Callback
             'onSuccess' => null, // A callback function name to be called if all files were successfully uploaded | ($files, $metas) | Callback
@@ -298,11 +298,11 @@ class Hcs_uploader_Controller_Uploader extends Controller
                 try {
                     $img = new SimpleImage();
         
-                    $img->load($params['uploadDir'] . '/' . $metas[$key]['name'])
+                    $img->load($params['uploadDir'] . $metas[$key]['name'])
                     ->thumbnail(App::$forum_config['uploader_thumbnail_width'], App::$forum_config['uploader_thumbnail_height'])
                     ->save($path . $metas[$key]['name']);
                     if (App::$forum_config['uploader_watermark_image'])
-                        $img->load($params['uploadDir'] . '/' . $metas[$key]['name'])
+                        $img->load($params['uploadDir'] . $metas[$key]['name'])
                         ->overlay(App::$forum_config['uploader_watermark_image'], App::$forum_config['uploader_watermark_position'], .8)
                         ->save($params['uploadDir'] . $metas[$key]['name']);
                 } catch (Exception $e) {}
