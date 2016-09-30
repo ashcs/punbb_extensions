@@ -38,4 +38,5 @@ return array (
 	
 	'Upload files label'       => 'Загрузка файлов',
 	'Upload files button'      => 'Загрузить',
+	'Avatar info size'         => 'Максимальный допустимый размер файла %s Мб.',
 );

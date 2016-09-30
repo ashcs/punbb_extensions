@@ -38,4 +38,6 @@ return array (
 	
 	'Upload files label'       => 'Upload files',
 	'Upload files button'      => 'Upload',
+	
+	'Avatar info size'         => 'The maximum image size allowed is %s Mb.',
 );

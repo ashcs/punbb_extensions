@@ -17,7 +17,7 @@
 <extension engine="1.0">
 	<id>hcs_uploader</id>
 	<title>Uploader</title>
-	<version>1.1.1</version>
+	<version>1.1.2</version>
 	<description><![CDATA[This extension allows you to upload files with ajax drag&drop form]]></description>
 	<author>hcs, MrX</author>
 	<minversion>1.4.4</minversion>
@@ -190,6 +190,11 @@ ob_start();
 <?php
         ]]></hook>
 
+        <hook id="pf_change_details_avatar_pre_header_load"><![CDATA[
+App::load_language('hcs_uploader');        
+$forum_page['frm_info']['avatar_size'] = '<li><span>'.sprintf(App::$lang['Avatar info size'],forum_number_format($forum_config['uploader_max_file_size'])).'</span></li>';        
+        ]]></hook>
+        
 	</hooks>
 	
 </extension>

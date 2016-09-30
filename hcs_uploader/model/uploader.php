@@ -69,6 +69,7 @@ class Hcs_uploader_Model_Uploader extends Base
             'upload_token' => generate_form_token(forum_link(App::$forum_url['uploader_file_upload'])),
             'upload_url' => forum_link(App::$forum_url['uploader_file_upload']),
             //'remove_url' => forum_link(App::$forum_url['uploader_file_remove']),
+            'sign'     => generate_form_token($resource_name),
             'resource_name'    => $resource_name,
             //'resource_id'   => $resource_id
         ));

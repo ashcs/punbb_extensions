@@ -27,6 +27,18 @@ class Hcs_uploader_Controller_Uploader extends Controller
 
     public function upload()
     {
+        
+        if (!isset($_POST['sign'])) {
+            message(App::$lang_common['Bad request']);
+        }
+        
+        $resource_name =  (isset($_POST['resource_name'])) ? forum_trim($_POST['resource_name']) : '';
+        $sign = $_POST['sign'];
+        
+        if ($_POST['sign'] != generate_form_token($resource_name)) {
+             message(App::$lang_common['Bad request']);
+        }
+        
         $handle = new Uploader($_FILES['files']);
         $user_id = intval($GLOBALS["forum_user"]["id"]);
         
@@ -35,7 +47,6 @@ class Hcs_uploader_Controller_Uploader extends Controller
         }
 
         $params = $this->get_default_params($user_id);
-        $resource_name =  (isset($_POST['resource_name'])) ? forum_trim($_POST['resource_name']) : '';
 
         if (method_exists($this, 'get_'.$resource_name.'_params')) {
             $this->{'get_'.$resource_name.'_params'}($params, $user_id);
@@ -110,7 +121,7 @@ class Hcs_uploader_Controller_Uploader extends Controller
                 App::$forum_db->query_build($query) or error(__FILE__, __LINE__);
 
                 unlink( FORUM_ROOT.$file['file_path'].$file['name'] );
-                if (in_array($file['name'], self::$thumbnail_mime)) {
+                if (in_array($file['mime'], self::$thumbnail_mime)) {
                     unlink( FORUM_ROOT.$file['file_path'].App::$forum_config['uploader_thumbnail_path'].$file['name'] );
                 }
                 
@@ -256,7 +267,7 @@ class Hcs_uploader_Controller_Uploader extends Controller
                 echo json_encode(array('result' => -1, 'message' => 'uploader_max_upload_total'));
                 exit;
             }
-        
+            
             $orig_name = $metas[$key]['old_name'];// . '.' . $metas[$key]['extension'];
             $ar = explode('/', $files[$key]);
         
