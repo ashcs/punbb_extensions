@@ -105,7 +105,7 @@
 				$forum_loader->add_js('
 						window.sceditor_opts = {
 							root_url: "' . $ext_info['url'] . '",
-							style: "' . $forum_user['style'] . '",
+							style: "' . $style . '",
 							locale: "' . $locale_opt . '",
 							toolbar: "' . $forum_config['o_sc_wysiwyg_toolbar'] . '",
 							emoticons: ' . json_encode($wysiwyg_smilies) . '
