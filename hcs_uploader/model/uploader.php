@@ -51,7 +51,7 @@ class Hcs_uploader_Model_Uploader extends Base
     {
         App::$forum_loader->add_js($GLOBALS['ext_info']['url'] . '/js/jquery.filer.min.js', array(
             'type' => 'url',
-            'weight' => 160
+            'weight' => 90
         ));
         
         if ($resource_name != '' && file_exists($GLOBALS['ext_info']['path']. '/js/'.$resource_name.'.uploader.js')) {
@@ -61,9 +61,9 @@ class Hcs_uploader_Model_Uploader extends Base
             $uploader = $GLOBALS['ext_info']['url'] . '/js/filer.uploader.js';
         }
         
-        App::$forum_loader->add_js($uploader, array('type' => 'url','weight' => 200));
+        App::$forum_loader->add_js($uploader, array('type' => 'url','weight' => 91));
 
-        App::$forum_loader->add_js('PUNBB.uploader = {}', array('type' => 'inline', 'weight'=> 201));
+        App::$forum_loader->add_js('PUNBB.uploader = {}', array('type' => 'inline', 'weight'=> 80));
         
         View::$instance = View::factory(FORUM_ROOT . 'extensions/hcs_uploader/view/upload_form', array(
             'upload_token' => generate_form_token(forum_link(App::$forum_url['uploader_file_upload'])),

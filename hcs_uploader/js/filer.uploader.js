@@ -16,7 +16,7 @@
  */
 
 
-if (typeof PUNBB.uploader.ready_files==="undefined"||!PUNBB.uploader.ready_files) 
+if (typeof PUNBB.uploader.ready_files == "undefined"||!PUNBB.uploader.ready_files) 
 {
 	PUNBB.uploader.ready_files=null;
 }
@@ -148,14 +148,6 @@ $('#filer_input').filer({
 
 //$(document).ready(function() {
 
-	if ($.sceditor) {
-		$.sceditor.command.set("image", {
-				exec: function() {
-					$(".form-group.attach").modal({fadeDuration: 100, modalClass:"modal2"});
-				}				
-		});
-	}		
-	
 	PUNBB.uploader.click_handler = function(e,i) {
     	var filerKit = $("#filer_input").prop("jFiler");
     	var file = filerKit.files_list[i].file;
