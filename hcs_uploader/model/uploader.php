@@ -61,9 +61,9 @@ class Hcs_uploader_Model_Uploader extends Base
             $uploader = $GLOBALS['ext_info']['url'] . '/js/filer.uploader.js';
         }
         
-        App::$forum_loader->add_js($uploader, array('type' => 'url','weight' => 280,));
+        App::$forum_loader->add_js($uploader, array('type' => 'url','weight' => 200));
 
-        App::$forum_loader->add_js('PUNBB.uploader = {}', array('type' => 'inline', 'weight'=> 0));
+        App::$forum_loader->add_js('PUNBB.uploader = {}', array('type' => 'inline', 'weight'=> 201));
         
         View::$instance = View::factory(FORUM_ROOT . 'extensions/hcs_uploader/view/upload_form', array(
             'upload_token' => generate_form_token(forum_link(App::$forum_url['uploader_file_upload'])),

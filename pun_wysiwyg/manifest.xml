@@ -114,7 +114,7 @@
 					array('type' => 'inline')
 				);
 
-				$forum_loader->add_js($ext_info['url'].'/js/jquery.sceditor.punbb-helper.js');
+				$forum_loader->add_js($ext_info['url'].'/js/jquery.sceditor.punbb-helper.js', array('type' => 'url','weight' => 300));
 			}
 		]]></hook>
 

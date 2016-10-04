@@ -144,20 +144,17 @@ $('#filer_input').filer({
     }
 });
 
-$(document).ready(function() {
-	
-	if (typeof PUNBB.env.sceditor != "undefined" && PUNBB.env.sceditor == true ) {
+
+
+//$(document).ready(function() {
+
+	if ($.sceditor) {
 		$.sceditor.command.set("image", {
 				exec: function() {
 					$(".form-group.attach").modal({fadeDuration: 100, modalClass:"modal2"});
 				}				
 		});
-
-	}
-	else {
-		PUNBB.env.sceditor = false;
-	}	
-	
+	}		
 	
 	PUNBB.uploader.click_handler = function(e,i) {
     	var filerKit = $("#filer_input").prop("jFiler");
@@ -185,4 +182,5 @@ $(document).ready(function() {
     	PUNBB.uploader.click_handler(this, $(this).closest('li.jFiler-item').data('jfiler-index'));
 	});
 	
-});
+//});
+	
