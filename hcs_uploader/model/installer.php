@@ -52,7 +52,7 @@ class Hcs_uploader_Model_Installer {
                     'allow_null' => false
                 ),
                 'name' => array(
-                    'datatype' => 'VARCHAR(25)',
+                    'datatype' => 'VARCHAR(45)',
                     'allow_null' => false
                 ),
                 'file_path' => array(
@@ -95,6 +95,8 @@ class Hcs_uploader_Model_Installer {
 		if (!App::$forum_db->table_exists('upload_files')) 
 			App::$forum_db->create_table('upload_files', self::$schema);
 
+		App::$forum_db->alter_field('upload_files', 'name', 'VARCHAR(45)', false);
+		
 		foreach (self::$config as $key => $value)
 			forum_config_add($key, $value);
 
